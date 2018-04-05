@@ -25,10 +25,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        turingmachine.cpp
+        turingmachine.cpp \
+    bubble.cpp \
+    bubblewindow.cpp
 
 HEADERS += \
-        turingmachine.h
+        turingmachine.h \
+    bubble.h \
+    bubblewindow.h
 
 FORMS += \
         turingmachine.ui

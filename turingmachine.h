@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QPushButton>
 #include <QBoxLayout>
-#include <QtOpenGL>
+#include <bubblewindow.h>
 
 namespace Ui {
 class TuringMachine;
@@ -20,7 +20,7 @@ public:
 
 private:
     QWidget* _parent;
-    QOpenGLWidget* _openGL_screen;
+    BubbleWindow* _bubble_window;
     Ui::TuringMachine *ui;
 };
 

@@ -5,7 +5,12 @@ TuringMachine::TuringMachine() :
     ui(new Ui::TuringMachine)
 {
     _parent = new QWidget();
-    _openGL_screen = new QOpenGLWidget();
+    _bubble_window = new BubbleWindow(_parent);
+    std::set<Bubble*>* bubble_set = new std::set<Bubble*>();
+    bubble_set->insert(new Bubble(new QPoint(15, 15), new QColor(20, 22, 16), new float(15)));
+    _bubble_window->SetBubbleSet(bubble_set);
+    _bubble_window->resize(200, 200);
+
     QPushButton *addBulbButton = new QPushButton("add bulb", _parent);
     QPushButton *deleteBulbButton = new QPushButton("delete bulb", _parent);
 
@@ -14,13 +19,10 @@ TuringMachine::TuringMachine() :
     buttonControlPanelLayout->addWidget(addBulbButton);
     buttonControlPanelLayout->addWidget(deleteBulbButton);
 
-    fullLayout->addWidget(_openGL_screen);
     fullLayout->addLayout(buttonControlPanelLayout);
 
     _parent->setLayout(fullLayout);
     ui->setupUi(this);
-
-    _parent->show();
 }
 
 TuringMachine::~TuringMachine()
