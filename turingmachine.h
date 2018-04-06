@@ -15,11 +15,10 @@ class TuringMachine : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit TuringMachine();
+    explicit TuringMachine(QWidget* parent = 0);
     ~TuringMachine();
 
 private:
-    QWidget* _parent;
     BubbleWindow* _bubble_window;
     Ui::TuringMachine *ui;
 };

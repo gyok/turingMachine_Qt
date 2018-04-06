@@ -1,28 +1,29 @@
 #include "turingmachine.h"
 #include "ui_turingmachine.h"
 
-TuringMachine::TuringMachine() :
+TuringMachine::TuringMachine(QWidget* parent) :
+    QMainWindow(parent),
     ui(new Ui::TuringMachine)
 {
-    _parent = new QWidget();
-    _bubble_window = new BubbleWindow(_parent);
-    std::set<Bubble*>* bubble_set = new std::set<Bubble*>();
-    bubble_set->insert(new Bubble(new QPoint(15, 15), new QColor(20, 22, 16), new float(15)));
-    _bubble_window->SetBubbleSet(bubble_set);
-    _bubble_window->resize(200, 200);
+    ui->setupUi(this);
+    QWidget* mainWindow = new QWidget;
+    _bubble_window = new BubbleWindow(this);
+    _bubble_window->SetBubbleSet(new std::set<Bubble*>());
 
-    QPushButton *addBulbButton = new QPushButton("add bulb", _parent);
-    QPushButton *deleteBulbButton = new QPushButton("delete bulb", _parent);
+    QPushButton *addBulbButton = new QPushButton("add bubble", this);
+    QPushButton *deleteBulbButton = new QPushButton("delete bubble", this);
+    connect(addBulbButton, SIGNAL(clicked(bool)), this->_bubble_window, SLOT(AddBubble()));
 
     QVBoxLayout *fullLayout = new QVBoxLayout;
     QHBoxLayout *buttonControlPanelLayout = new QHBoxLayout;
     buttonControlPanelLayout->addWidget(addBulbButton);
     buttonControlPanelLayout->addWidget(deleteBulbButton);
 
+    fullLayout->addWidget(_bubble_window);
     fullLayout->addLayout(buttonControlPanelLayout);
 
-    _parent->setLayout(fullLayout);
-    ui->setupUi(this);
+    mainWindow->setLayout(fullLayout);
+    setCentralWidget(mainWindow);
 }
 
 TuringMachine::~TuringMachine()
