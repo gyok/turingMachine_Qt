@@ -7,16 +7,13 @@ BubbleWindow::BubbleWindow(QWidget* pwgt /*= 0*/) : QGLWidget(pwgt)
     _bubbleDrag = new bool(false);
     SetBubbleSet(new set<Bubble*>());
     SetSelectedBubbleSet(new set<Bubble*>());
+    glEnable(GL_MULTISAMPLE);
 
 }
 
 void BubbleWindow::initializeGL()
 {
     qglClearColor(QColor(247, 241, 245));
-    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void BubbleWindow::resizeGL(int w, int h)

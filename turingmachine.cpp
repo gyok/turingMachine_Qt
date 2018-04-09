@@ -7,6 +7,12 @@ TuringMachine::TuringMachine(QWidget* parent) :
 {
     ui->setupUi(this);
     QWidget* mainWindow = new QWidget;
+
+    QGLFormat fmt;
+    fmt.setSampleBuffers(true);
+    fmt.setSamples(8);
+    QGLFormat::setDefaultFormat(fmt);
+
     _bubble_window = new BubbleWindow(this);
     _bubble_window->resize(400, 200);
 
