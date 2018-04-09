@@ -8,7 +8,7 @@ TuringMachine::TuringMachine(QWidget* parent) :
     ui->setupUi(this);
     QWidget* mainWindow = new QWidget;
     _bubble_window = new BubbleWindow(this);
-    _bubble_window->SetBubbleSet(new std::set<Bubble*>());
+    _bubble_window->resize(400, 200);
 
     QPushButton *addBulbButton = new QPushButton("add bubble", this);
     QPushButton *deleteBulbButton = new QPushButton("delete bubble", this);

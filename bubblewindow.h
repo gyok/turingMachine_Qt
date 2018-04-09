@@ -25,7 +25,10 @@ protected:
 
     bool* _bubbleDrag;
     Bubble* _draggedBubble;
+    QColor* _selected_bubble_color = new QColor(144, 14, 249);
+    QColor* _default_bubble_color = new QColor(112, 122, 116);
     std::set<Bubble*>* _bubble_set;
+    std::set<Bubble*>* _selected_bubble_set;
 
 signals:
     void BubbleMove(Bubble*);
@@ -37,6 +40,13 @@ public:
     // set of bubbles
     std::set<Bubble*>* GetBubbleSet();
     void SetBubbleSet(std::set<Bubble*>*);
+
+    // set of selected bubbles
+    std::set<Bubble*>* GetSelectedBubbleSet();
+    void SetSelectedBubbleSet(std::set<Bubble*>*);
+
+    void SelectBubble(Bubble*);
+    void DeselectBubble(Bubble*);
 
     BubbleWindow(QWidget* pwgt = 0);
 };
