@@ -1,5 +1,7 @@
 #include "bubblewindow.h"
 
+#define BUBBLE_DEFAULT_SIZE 15
+
 using namespace std;
 
 BubbleWindow::BubbleWindow(QWidget* pwgt /*= 0*/) : QGLWidget(pwgt)
@@ -146,7 +148,17 @@ void BubbleWindow::SetSelectedBubbleSet(std::set<Bubble*>* selected_bubble_set) 
 }
 
 void BubbleWindow::AddBubble() {
-    GetBubbleSet()->insert(new Bubble(new QPoint(15, 15), new QColor(112, 122, 116),new QString(QStringLiteral("A %1").arg((*_bubble_count)++)), new float(15)));
+    QPoint* point = new QPoint(mapFromGlobal(QCursor::pos()));
+    cout << point->x() << " " << point->y() << endl;
+    if (!((0 < point->x())
+     && (point->x() < _scrollArea->size().width())
+     && (0 < point->y())
+     && (point->y() < _scrollArea->size().height()))) {
+        point->setX(BUBBLE_DEFAULT_SIZE);
+        point->setY(BUBBLE_DEFAULT_SIZE);
+    }
+
+    GetBubbleSet()->insert(new Bubble(point, new QColor(112, 122, 116),new QString(QStringLiteral("A %1").arg((*_bubble_count)++)), new float(BUBBLE_DEFAULT_SIZE)));
 
     this->updateGL();
 }
@@ -280,4 +292,8 @@ bool BubbleWindow::BubbleArrowConnect(Bubble* bubble_from, Bubble* bubble_to) {
 
 
     return true;
+}
+
+void BubbleWindow::SetScrollArea(QScrollArea* scrollArea) {
+    _scrollArea = scrollArea;
 }

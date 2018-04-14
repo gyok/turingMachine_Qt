@@ -4,6 +4,7 @@
 #include <QGLWidget>
 #include <QGuiApplication>
 #include <QMouseEvent>
+#include <QScrollArea>
 #include <bubble.h>
 #include <set>
 #include <math.h>
@@ -28,6 +29,7 @@ protected:
     Bubble* FindBubbleAtPoint(QPoint, bool*);
     bool BubbleArrowConnect(Bubble*, Bubble*);
 
+    QScrollArea* _scrollArea;
     int* _bubble_count;
     bool* _bubbleDrag;
     bool* _bubbleConnect;
@@ -67,6 +69,8 @@ public:
 
     void SelectBubble(Bubble*);
     void DeselectBubble(Bubble*);
+
+    void SetScrollArea(QScrollArea*);
 
     BubbleWindow(QWidget* pwgt = 0);
 };
