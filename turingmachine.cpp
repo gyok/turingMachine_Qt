@@ -19,6 +19,7 @@ TuringMachine::TuringMachine(QWidget* parent) :
     QPushButton *addBulbButton = new QPushButton("add bubble", this);
     QPushButton *deleteBulbButton = new QPushButton("delete bubble", this);
     connect(addBulbButton, SIGNAL(clicked(bool)), this->_bubble_window, SLOT(AddBubble()));
+    connect(deleteBulbButton, SIGNAL(clicked(bool)), this->_bubble_window, SLOT(DeleteSelectedBubbles()));
 
     QVBoxLayout *fullLayout = new QVBoxLayout;
     QHBoxLayout *buttonControlPanelLayout = new QHBoxLayout;

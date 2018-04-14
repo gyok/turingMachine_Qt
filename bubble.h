@@ -3,6 +3,10 @@
 
 #include <QPoint>
 #include <QColor>
+#include <set>
+#include <iostream>
+
+using namespace std;
 
 class Bubble
 {
@@ -11,6 +15,7 @@ private:
     QColor* _color;
     QString* _name;
     float* _size;
+    set<Bubble*>* _connection_set;
 public:
     // position of bubble at bubble map
     QPoint* GetPosition();
@@ -28,7 +33,11 @@ public:
     float* GetBubbleSize();
     void SetBubbleSize(float*);
 
-    Bubble(QPoint*, QColor*, float*);
+    // set of connections from this bubble to another ( this_bubble -> another_bubble)
+    set<Bubble*>* GetConnectionBubbleSet();
+    bool SetConnectionBubbleSet(set<Bubble*>*);
+
+    Bubble(QPoint* = new QPoint(15, 15), QColor* = new QColor(112, 122, 116), QString* = new QString("default"), float* = new float(15));
     ~Bubble();
 };
 
