@@ -14,7 +14,7 @@ TuringMachine::TuringMachine(QWidget* parent) :
     QGLFormat::setDefaultFormat(fmt);
 
     _bubble_window = new BubbleWindow(this);
-    _bubble_window->resize(400, 200);
+    _bubble_window->resize(2000, 2000);
 
     QPushButton *addBulbButton = new QPushButton("add bubble", this);
     QPushButton *deleteBulbButton = new QPushButton("delete bubble", this);
@@ -26,7 +26,11 @@ TuringMachine::TuringMachine(QWidget* parent) :
     buttonControlPanelLayout->addWidget(addBulbButton);
     buttonControlPanelLayout->addWidget(deleteBulbButton);
 
-    fullLayout->addWidget(_bubble_window);
+    _bubble_window_sa = new QScrollArea();
+    _bubble_window_sa->setBackgroundRole(QPalette::Light);
+    _bubble_window_sa->setWidget(_bubble_window);
+
+    fullLayout->addWidget(_bubble_window_sa);
     fullLayout->addLayout(buttonControlPanelLayout);
 
     mainWindow->setLayout(fullLayout);

@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QPushButton>
 #include <QBoxLayout>
+#include <QScrollArea>
 #include <bubblewindow.h>
 
 namespace Ui {
@@ -20,6 +21,7 @@ public:
 
 private:
     BubbleWindow* _bubble_window;
+    QScrollArea* _bubble_window_sa;
     Ui::TuringMachine *ui;
 };
 
