@@ -11,6 +11,9 @@ BubbleWindow::BubbleWindow(QWidget* pwgt /*= 0*/) : QGLWidget(pwgt)
     _bubbleConnect = new bool(false);
     _name_label_font = new QFont("cairo");
 
+
+    setFocusPolicy(Qt::StrongFocus);
+
     SetBubbleSet(new set<Bubble*>());
     SetSelectedBubbleSet(new set<Bubble*>());
     glEnable(GL_MULTISAMPLE);
@@ -56,7 +59,6 @@ void BubbleWindow::mousePressEvent(QMouseEvent *event) {
             if (QGuiApplication::keyboardModifiers() != Qt::SHIFT) {
                 for (set<Bubble*>::iterator it = GetBubbleSet()->begin(); it != GetBubbleSet()->end(); ++it) {
                     DeselectBubble(*it);
-                    cout << "no SHIFT" << endl;
                 }
             }
             SelectBubble(finded_bubble_iterator);
@@ -67,7 +69,6 @@ void BubbleWindow::mousePressEvent(QMouseEvent *event) {
             DeselectBubble(*it);
         }
 
-        cout << "deselect" << endl;
         _selected_bubble_set->clear();
     }
 }
@@ -93,6 +94,33 @@ void BubbleWindow::mouseMoveEvent(QMouseEvent *event) {
     if (*_bubbleDrag) {
         _draggedBubble->SetPosition(new QPoint(InRange(0, event->x(), width()), InRange(0, event->y(), height())));
         updateGL();
+    }
+}
+
+void BubbleWindow::mouseDoubleClickEvent(QMouseEvent *event) {
+    bool* bubble_finded = new bool(false);
+    Bubble* finded_bubble_iterator = FindBubbleAtPoint(event->pos(), bubble_finded);
+
+    if (*bubble_finded) {
+        RenameBubble(finded_bubble_iterator);
+    }
+}
+
+void BubbleWindow::keyPressEvent(QKeyEvent *event) {
+    if (_rename_bubble_mode) {
+        if (event->key() != Qt::Key_Enter
+         && event->key() != Qt::Key_Return
+         && event->key() != Qt::Key_Escape) {
+            _rename_bubble_name += event->text();
+            _rename_bubble->SetName(new QString(_rename_bubble_name));
+
+            updateGL();
+        } else if (event->key() == Qt::Key_Enter
+                || event->key() == Qt::Key_Return) {
+            SkipRenameBubble(true);
+        } else {
+            SkipRenameBubble(false);
+        }
     }
 }
 
@@ -149,7 +177,6 @@ void BubbleWindow::SetSelectedBubbleSet(std::set<Bubble*>* selected_bubble_set) 
 
 void BubbleWindow::AddBubble() {
     QPoint* point = new QPoint(mapFromGlobal(QCursor::pos()));
-    cout << point->x() << " " << point->y() << endl;
     if (!((0 < point->x())
      && (point->x() < _scrollArea->size().width())
      && (0 < point->y())
@@ -166,10 +193,8 @@ void BubbleWindow::AddBubble() {
 void BubbleWindow::DeleteSelectedBubbles() {
     // go throught all babbles and dellete they connections with selected bubbles
     for (set<Bubble*>::iterator bubble_it = GetBubbleSet()->begin(); bubble_it != GetBubbleSet()->end(); bubble_it++) {
-        cout << (*bubble_it)->GetName()->toStdString() << endl;
         for (set<Bubble*>::iterator it = GetSelectedBubbleSet()->begin(); it != GetSelectedBubbleSet()->end(); it++) {
             if ((*bubble_it)->GetConnectionBubbleSet()->find(*it) != (*bubble_it)->GetConnectionBubbleSet()->end()) {
-                cout << "\tfinded " << (*it)->GetName()->toStdString() << endl;
                 (*bubble_it)->GetConnectionBubbleSet()->erase(*it);
             }
         }
@@ -183,8 +208,6 @@ void BubbleWindow::DeleteSelectedBubbles() {
     }
 
     updateGL();
-
-    cout << 172 << endl;
 }
 
 void BubbleWindow::SelectBubble(Bubble* bubble) {
@@ -195,6 +218,7 @@ void BubbleWindow::SelectBubble(Bubble* bubble) {
 void BubbleWindow::DeselectBubble(Bubble* bubble) {
     _selected_bubble_set->erase(bubble);
     bubble->SetColor(new QColor(_default_bubble_color));
+    SkipRenameBubble(false);
 }
 
 bool BubbleWindow::StartConnectBubble(Bubble* bubble) {
@@ -296,4 +320,25 @@ bool BubbleWindow::BubbleArrowConnect(Bubble* bubble_from, Bubble* bubble_to) {
 
 void BubbleWindow::SetScrollArea(QScrollArea* scrollArea) {
     _scrollArea = scrollArea;
+}
+
+void BubbleWindow::RenameBubble(Bubble* bubble) {
+    cout << "RenameBubble" << endl;
+    _rename_bubble_mode = true;
+    _rename_bubble = bubble;
+    _before_rename_bubble_name = *bubble->GetName();
+}
+
+void BubbleWindow::SkipRenameBubble(bool saveBubbleName) {
+    cout << "SkipRenameBubble" << endl;
+    if (_rename_bubble_mode) {
+        if (!saveBubbleName) {
+            _rename_bubble->SetName(new QString(_before_rename_bubble_name));
+        }
+
+        _rename_bubble_mode = false;
+        _rename_bubble_name = "";
+        _before_rename_bubble_name = "";
+        _rename_bubble = 0;
+    }
 }

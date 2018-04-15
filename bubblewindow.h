@@ -21,18 +21,27 @@ protected:
     virtual void mousePressEvent(QMouseEvent *event);
     virtual void mouseReleaseEvent(QMouseEvent *event);
     virtual void mouseMoveEvent(QMouseEvent *event);
+    virtual void mouseDoubleClickEvent(QMouseEvent *event);
+    virtual void keyPressEvent(QKeyEvent *event);
 
     void DrawBubble(Bubble*);
     double PointDistance(QPoint, QPoint);
     int InRange(int min, int current, int max);
+    void RenameBubble(Bubble*);
+    void SkipRenameBubble(bool saveBubbleName);
+
 
     Bubble* FindBubbleAtPoint(QPoint, bool*);
     bool BubbleArrowConnect(Bubble*, Bubble*);
 
     QScrollArea* _scrollArea;
+    bool _rename_bubble_mode = false;
     int* _bubble_count;
     bool* _bubbleDrag;
     bool* _bubbleConnect;
+    QString _rename_bubble_name = "";
+    QString _before_rename_bubble_name = "";
+    Bubble* _rename_bubble;
     Bubble* _draggedBubble;
     Bubble* _connectingBubble;
     QColor _selected_bubble_color = QColor(144, 14, 249);
