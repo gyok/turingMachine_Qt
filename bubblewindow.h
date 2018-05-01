@@ -29,6 +29,7 @@ protected:
     int InRange(int min, int current, int max);
     void RenameBubble(Bubble*);
     void SkipRenameBubble(bool saveBubbleName);
+    void DrawArrowToPoint(Bubble*, QPoint*);
 
 
     Bubble* FindBubbleAtPoint(QPoint, bool*);
@@ -49,6 +50,7 @@ protected:
     std::set<Bubble*>* _bubble_set;
     std::set<Bubble*>* _selected_bubble_set;
     QFont* _name_label_font;
+    QPoint _currentPosition = QPoint(0,0);
 
 signals:
     void BubbleMove(Bubble*);

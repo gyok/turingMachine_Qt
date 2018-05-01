@@ -40,6 +40,11 @@ void BubbleWindow::paintGL()
     for (set<Bubble*>::iterator it = GetBubbleSet()->begin(); it != GetBubbleSet()->end(); ++it) {
         DrawBubble(*it);
     }
+
+    if (*_bubbleConnect) {
+        std::cout << this->pos().x() << std::endl;
+        DrawArrowToPoint(_connectingBubble, new QPoint(_currentPosition));
+    }
 }
 
 void BubbleWindow::mousePressEvent(QMouseEvent *event) {
@@ -93,6 +98,9 @@ void BubbleWindow::mouseReleaseEvent(QMouseEvent *event) {
 void BubbleWindow::mouseMoveEvent(QMouseEvent *event) {
     if (*_bubbleDrag) {
         _draggedBubble->SetPosition(new QPoint(InRange(0, event->x(), width()), InRange(0, event->y(), height())));
+        updateGL();
+    } else if (*_bubbleConnect) {
+        _currentPosition = event->pos();
         updateGL();
     }
 }
@@ -341,4 +349,51 @@ void BubbleWindow::SkipRenameBubble(bool saveBubbleName) {
         _before_rename_bubble_name = "";
         _rename_bubble = 0;
     }
+}
+
+void BubbleWindow::DrawArrowToPoint(Bubble* bubble_from, QPoint* bubble_to_point) {
+    QPoint* bubble_from_point = bubble_from->GetPosition();
+    double point_disctance = PointDistance(*bubble_from_point, *bubble_to_point);
+    double distance_cos_ratio = (double)(bubble_from_point->x() - bubble_to_point->x()) / point_disctance;
+    double distance_sin_ratio = (double)(bubble_from_point->y() - bubble_to_point->y()) / point_disctance;
+
+    int section = 0;
+    bool a1 =  (double)(bubble_from_point->x() - bubble_to_point->x()) > 0;
+    bool b1 = (double)(bubble_from_point->y() - bubble_to_point->y()) > 0;
+    if (a1 && !b1) {
+        section = 2;
+    } else if (!a1 && !b1) {
+        section = 3;
+    } else if (!a1 && b1) {
+        section = 0;
+    } else if (a1 && b1) {
+        section = 1;
+    }
+
+    double alpha = section > 1 ? 3.1415927 - acos(distance_cos_ratio) : 3.1415927 + acos(distance_cos_ratio);
+    double betta = 0.38;
+ // angle of arrow parts
+    double a = 22;
+
+    QPoint* arrow_start = new QPoint(bubble_from_point->x() - *bubble_from->GetBubbleSize() * distance_cos_ratio,
+                                     bubble_from_point->y() - *bubble_from->GetBubbleSize() * distance_sin_ratio);
+    QPoint* arrow_end = new QPoint(bubble_to_point->x(),
+                                   bubble_to_point->y());
+    QPoint* arrow_end_l_spear = new QPoint(bubble_to_point->x() - a * cos(alpha - betta),
+                                         bubble_to_point->y() - a * sin(alpha - betta));
+    QPoint* arrow_end_r_spear = new QPoint(bubble_to_point->x() - a * cos(alpha + betta),
+                                         bubble_to_point->y() - a * sin(alpha + betta));
+
+    glLineWidth(3.0f);
+    glBegin(GL_LINES);
+    glColor3f(0.49f, 0.52f, 0.88f);
+    glVertex2f(arrow_start->x(), arrow_start->y());
+    glVertex2f(arrow_end->x(), arrow_end->y());
+    glVertex2f(arrow_end->x(), arrow_end->y());
+    glVertex2f(arrow_end_l_spear->x(), arrow_end_l_spear->y());
+    glVertex2f(arrow_end->x(), arrow_end->y());
+    glVertex2f(arrow_end_r_spear->x(), arrow_end_r_spear->y());
+    glEnd();
+
+    std::cout << arrow_start->x() <<" " << arrow_start->y() << " " << arrow_end_r_spear->x() << " " << arrow_end_r_spear->y() << std::endl;
 }
