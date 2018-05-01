@@ -27,12 +27,14 @@ SOURCES += \
         main.cpp \
         turingmachine.cpp \
     bubble.cpp \
-    bubblewindow.cpp
+    bubblewindow.cpp \
+    turingline.cpp
 
 HEADERS += \
         turingmachine.h \
     bubble.h \
-    bubblewindow.h
+    bubblewindow.h \
+    turingline.h
 
 FORMS += \
         turingmachine.ui

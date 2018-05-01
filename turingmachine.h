@@ -5,7 +5,9 @@
 #include <QPushButton>
 #include <QBoxLayout>
 #include <QScrollArea>
+#include <QTableWidget>
 #include <bubblewindow.h>
+#include <turingline.h>
 
 namespace Ui {
 class TuringMachine;
@@ -22,6 +24,11 @@ public:
 private:
     BubbleWindow* _bubble_window;
     QScrollArea* _bubble_window_sa;
+
+    TuringLine* _line;
+    QTableWidget* _line_widget;
+    QScrollArea* _line_sa;
+
     Ui::TuringMachine *ui;
 };
 
