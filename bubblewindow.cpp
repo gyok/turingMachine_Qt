@@ -119,8 +119,15 @@ void BubbleWindow::keyPressEvent(QKeyEvent *event) {
     if (_rename_bubble_mode) {
         if (event->key() != Qt::Key_Enter
                 && event->key() != Qt::Key_Return
-                && event->key() != Qt::Key_Escape) {
+                && event->key() != Qt::Key_Escape
+                && event->key() != Qt::Key_Backspace) {
+            std::cout << "key" << event->text().toStdString() << std::endl;
             _rename_bubble_name += event->text();
+            _rename_bubble->SetName(new QString(_rename_bubble_name));
+
+            updateGL();
+        } else if (event->key() == Qt::Key_Backspace) {
+            _rename_bubble_name.truncate(_rename_bubble_name.length() - 1);
             _rename_bubble->SetName(new QString(_rename_bubble_name));
 
             updateGL();
@@ -282,13 +289,14 @@ bool BubbleWindow::BubbleArrowConnect(Bubble* bubble_from, Bubble* bubble_to) {
     QPoint* bubble_to_point = bubble_to->GetPosition();
 
     double point_disctance = PointDistance(*bubble_from_point, *bubble_to_point);
+    // draw cicle arrow or connect two bubbles
     if (point_disctance == 0) {
         QPoint* ungle_center = new QPoint(bubble_from_point->x() + 4 * *bubble_from->GetBubbleSize() * sinf(2.8085),
                                           bubble_from_point->y() + 4 * *bubble_from->GetBubbleSize() * cosf(2.8085));
         QPoint* arrow_start = new QPoint(bubble_from_point->x() + *bubble_from->GetBubbleSize() * sinf(2.617),
                                          bubble_from_point->y() + *bubble_from->GetBubbleSize() * cosf(2.617));
         QPoint* arrow_ungle_start = new QPoint(bubble_from_point->x() + 4 * *bubble_from->GetBubbleSize() * sinf(2.617),
-                                         bubble_from_point->y() + 4 * *bubble_from->GetBubbleSize() * cosf(2.617));
+                                               bubble_from_point->y() + 4 * *bubble_from->GetBubbleSize() * cosf(2.617));
         QPoint* arrow_ungle_end = new QPoint(bubble_from_point->x() + 4 * *bubble_from->GetBubbleSize() * sinf(3.0),
                                              bubble_from_point->y() + 4 * *bubble_from->GetBubbleSize() * cosf(3.0));
         QPoint* arrow_end = new QPoint(bubble_from_point->x() + *bubble_from->GetBubbleSize() * sinf(3.0),
@@ -305,12 +313,9 @@ bool BubbleWindow::BubbleArrowConnect(Bubble* bubble_from, Bubble* bubble_to) {
         glVertex2f(arrow_end->x(), arrow_end->y());
         glEnd();
         glBegin(GL_LINE_STRIP);
-        std::cout << "distance " << PointDistance(*arrow_start, *ungle_center) << std::endl;
         for (int i = smoothness / 2.2; i < smoothness + smoothness / 9; i++) {
-//            if (i < smoothness / 5 || i > smoothness / 2) {
-                glVertex2f((ungle_center->rx() + ungle_radius * cosf(DOUBLE_PI * i / smoothness)),
-                           ungle_center->ry() + ungle_radius * sinf(DOUBLE_PI * i / smoothness));
-//            }
+            glVertex2f((ungle_center->rx() + ungle_radius * cosf(DOUBLE_PI * i / smoothness)),
+                       ungle_center->ry() + ungle_radius * sinf(DOUBLE_PI * i / smoothness));
         }
         glEnd();
 
@@ -368,6 +373,7 @@ void BubbleWindow::RenameBubble(Bubble* bubble) {
     _rename_bubble_mode = true;
     _rename_bubble = bubble;
     _before_rename_bubble_name = *bubble->GetName();
+    _rename_bubble->SetName(new QString("type in new name, Enter - save, Esc - dismiss"));
 }
 
 void BubbleWindow::SkipRenameBubble(bool saveBubbleName) {
