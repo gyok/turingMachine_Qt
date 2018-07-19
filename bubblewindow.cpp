@@ -1,16 +1,18 @@
-#include "bubblewindow.h"
+ #include "bubblewindow.h"
 
 #define BUBBLE_DEFAULT_SIZE 15
 #define DOUBLE_PI 6.2831854
 
 using namespace std;
 
-BubbleWindow::BubbleWindow(QWidget* pwgt /*= 0*/) : QGLWidget(pwgt)
+BubbleWindow::BubbleWindow(TuringLine* turingLine, QWidget* pwgt /*= 0*/) : QGLWidget(pwgt)
 {
     _bubble_count = new int(0);
     _bubbleDrag = new bool(false);
     _bubbleConnect = new bool(false);
     _name_label_font = new QFont("cairo");
+    _turingLine = turingLine;
+    _max_id = new int(0);
 
 
     setFocusPolicy(Qt::StrongFocus);
@@ -200,7 +202,7 @@ void BubbleWindow::AddBubble() {
         point->setY(BUBBLE_DEFAULT_SIZE);
     }
 
-    GetBubbleSet()->insert(new Bubble(point, new QColor(112, 122, 116),new QString(QStringLiteral("A %1").arg((*_bubble_count)++)), new float(BUBBLE_DEFAULT_SIZE)));
+    GetBubbleSet()->insert(new Bubble(new int(GetNewId()), point, new QColor(112, 122, 116),new QString(QStringLiteral("A %1").arg((*_bubble_count)++)), new float(BUBBLE_DEFAULT_SIZE)));
 
     this->updateGL();
 }
@@ -244,7 +246,20 @@ bool BubbleWindow::StartConnectBubble(Bubble* bubble) {
 }
 
 bool BubbleWindow::ConnectBubble(Bubble* bubble_iterator) {
-    _connectingBubble->GetConnectionBubbleSet()->insert(bubble_iterator);
+    BubbleConnectionManager* connectionManager = new BubbleConnectionManager(_turingLine);
+    if (connectionManager->execWindow() == QDialog::Accepted) {
+        _connectingBubble->GetConnectionBubbleSet()->insert(bubble_iterator);
+        for (set<BubbleConnectionLine*>::iterator it = connectionManager->GetConnectionLineSet()->begin();
+             it != connectionManager->GetConnectionLineSet()->end();
+             it++) {
+            cout << (*it)->GetSymbolBeforeLine()->text().toStdString() << endl;
+            cout << (*it)->GetComboBox()->currentText().toStdString() << endl;
+            cout << (*it)->GetSymbolAfterLine()->text().toStdString() << endl;
+        }
+        cout << "dialog closed" << endl;
+        (*_connectingBubble->GetConnectionInfo())[bubble_iterator->GetBubbleId()] = connectionManager->GetConnectionLineSet();
+    }
+
     *_bubbleConnect = false;
     _connectingBubble = 0;
 
@@ -435,4 +450,8 @@ void BubbleWindow::DrawArrowToPoint(Bubble* bubble_from, QPoint* bubble_to_point
     glEnd();
 
     std::cout << arrow_start->x() <<" " << arrow_start->y() << " " << arrow_end_r_spear->x() << " " << arrow_end_r_spear->y() << std::endl;
+}
+
+int BubbleWindow::GetNewId() {
+    return ++(*_max_id);
 }

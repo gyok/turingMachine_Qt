@@ -2,12 +2,15 @@
 
 using namespace std;
 
-Bubble::Bubble(QPoint* position, QColor* color, QString* name, float* size) {
+Bubble::Bubble(int* id, QPoint* position, QColor* color, QString* name, float* size) {
     SetPosition(position);
     SetColor(color);
     SetName(name);
     SetBubbleSize(size);
     SetConnectionBubbleSet(new set<Bubble*>());
+    _id = id;
+
+    _conn_info = new map<int, set<BubbleConnectionLine*>*>();
 }
 
 Bubble::~Bubble() {
@@ -57,4 +60,12 @@ bool Bubble::SetConnectionBubbleSet(set<Bubble*>* connection_set) {
     _connection_set = connection_set;
 
     return true;
+}
+
+map<int, set<BubbleConnectionLine*>*>* Bubble::GetConnectionInfo() {
+    return _conn_info;
+}
+
+int Bubble::GetBubbleId() {
+    return *_id;
 }

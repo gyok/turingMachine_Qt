@@ -6,8 +6,9 @@
 #include <QBoxLayout>
 #include <QScrollArea>
 #include <QTableWidget>
-#include <bubblewindow.h>
-#include <turingline.h>
+
+#include "bubblewindow.h"
+#include "turingline.h"
 
 namespace Ui {
 class TuringMachine;

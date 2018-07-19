@@ -4,7 +4,9 @@
 #include <QPoint>
 #include <QColor>
 #include <set>
+#include <map>
 #include <iostream>
+#include "bubbleconnectionline.h"
 
 using namespace std;
 
@@ -15,7 +17,9 @@ private:
     QColor* _color;
     QString* _name;
     float* _size;
+    int* _id;
     set<Bubble*>* _connection_set;
+    map<int, set<BubbleConnectionLine*>*>* _conn_info;
 public:
     // position of bubble at bubble map
     QPoint* GetPosition();
@@ -37,7 +41,12 @@ public:
     set<Bubble*>* GetConnectionBubbleSet();
     bool SetConnectionBubbleSet(set<Bubble*>*);
 
-    Bubble(QPoint* = new QPoint(15, 15), QColor* = new QColor(112, 122, 116), QString* = new QString("default"), float* = new float(15));
+    // map with information what to do when see new bubble
+    map<int, set<BubbleConnectionLine*>*>* GetConnectionInfo();
+
+    int GetBubbleId();
+
+    Bubble(int*, QPoint* = new QPoint(15, 15), QColor* = new QColor(112, 122, 116), QString* = new QString("default"), float* = new float(15));
     ~Bubble();
 };
 

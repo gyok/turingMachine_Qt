@@ -28,13 +28,21 @@ SOURCES += \
         turingmachine.cpp \
     bubble.cpp \
     bubblewindow.cpp \
-    turingline.cpp
+    turingline.cpp \
+    bubbleconnection.cpp \
+    bubbleconnectionline.cpp \
+    bubbleconnectionmanager.cpp \
+    linepushbutton.cpp
 
 HEADERS += \
         turingmachine.h \
     bubble.h \
     bubblewindow.h \
-    turingline.h
+    turingline.h \
+    bubbleconnection.h \
+    bubbleconnectionline.h \
+    bubbleconnectionmanager.h \
+    linepushbutton.h
 
 FORMS += \
         turingmachine.ui

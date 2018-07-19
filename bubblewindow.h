@@ -5,10 +5,12 @@
 #include <QGuiApplication>
 #include <QMouseEvent>
 #include <QScrollArea>
-#include <bubble.h>
 #include <set>
 #include <math.h>
 #include <iostream>
+#include "bubble.h"
+#include "bubbleconnectionmanager.h"
+#include "turingline.h"
 
 class BubbleWindow : public QGLWidget
 {
@@ -40,6 +42,7 @@ protected:
     int* _bubble_count;
     bool* _bubbleDrag;
     bool* _bubbleConnect;
+    int* _max_id;
     QString _rename_bubble_name = "";
     QString _before_rename_bubble_name = "";
     Bubble* _rename_bubble;
@@ -51,6 +54,7 @@ protected:
     std::set<Bubble*>* _selected_bubble_set;
     QFont* _name_label_font;
     QPoint _currentPosition = QPoint(0,0);
+    TuringLine* _turingLine;
 
 signals:
     void BubbleMove(Bubble*);
@@ -83,7 +87,10 @@ public:
 
     void SetScrollArea(QScrollArea*);
 
-    BubbleWindow(QWidget* pwgt = 0);
+    // return new id for bubble
+    int GetNewId();
+
+    BubbleWindow(TuringLine*, QWidget* pwgt = 0);
 };
 
 #endif // BUBBLEWINDOW_H
