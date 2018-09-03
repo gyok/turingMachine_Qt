@@ -27,3 +27,8 @@ QLineEdit* BubbleConnectionLine::GetSymbolAfterLine() {
 QComboBox* BubbleConnectionLine::GetComboBox() {
     return _wayToMoveCombobox;
 }
+
+
+QString BubbleConnectionLine::GetSelectedWay() {
+    return _wayToMoveCombobox->currentText();
+}

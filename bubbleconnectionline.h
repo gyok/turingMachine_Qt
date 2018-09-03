@@ -14,7 +14,7 @@ public:
     QLineEdit* GetSymbolBeforeLine();
     QLineEdit* GetSymbolAfterLine();
     QComboBox* GetComboBox();
-    char GetSelectedWay();
+    QString GetSelectedWay();
 private:
     QLineEdit* _symbolBeforeLine;
     QLineEdit* _symbolAfterLine;

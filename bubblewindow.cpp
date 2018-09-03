@@ -374,6 +374,19 @@ bool BubbleWindow::BubbleArrowConnect(Bubble* bubble_from, Bubble* bubble_to) {
         glVertex2f(arrow_end->x(), arrow_end->y());
         glVertex2f(arrow_end_r_spear->x(), arrow_end_r_spear->y());
         glEnd();
+        map<int, set<BubbleConnectionLine*>*> elem = *bubble_from->GetConnectionInfo();
+        set<BubbleConnectionLine*>* elem1 = elem[bubble_to->GetBubbleId()];
+        BubbleConnectionLine* elem2 = *(elem1->begin());
+        QString elem4 = elem2->GetSymbolBeforeLine()->text()
+                + elem2->GetSelectedWay();
+                + elem2->GetSymbolAfterLine()->text();
+        renderText(int((arrow_start->x() + arrow_end->x())/2),
+                   int((arrow_start->y() + arrow_end->y())/2),
+                   elem4,
+//                     (bubble_from->GetConnectionInfo()->find(bubble_to->GetBubbleId()) != map<int, set<BubbleConnectionLine*>*>.end()
+//                    ? bubble_from->GetConnectionInfo()->find(bubble_to->GetBubbleId())
+//                    : "-"),
+                   QFont("cairo"));
     }
 
     return true;
