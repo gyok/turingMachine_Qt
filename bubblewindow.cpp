@@ -351,7 +351,8 @@ bool BubbleWindow::BubbleArrowConnect(Bubble* bubble_from, Bubble* bubble_to) {
             section = 1;
         }
 
-        double alpha = section > 1 ? 3.1415927 - acos(distance_cos_ratio) : 3.1415927 + acos(distance_cos_ratio);
+        const double _pi = 3.1415927;
+        double alpha = section > 1 ? _pi - acos(distance_cos_ratio) : _pi + acos(distance_cos_ratio);
         double betta = 0.38;
         double a = 22;
 
@@ -374,19 +375,11 @@ bool BubbleWindow::BubbleArrowConnect(Bubble* bubble_from, Bubble* bubble_to) {
         glVertex2f(arrow_end->x(), arrow_end->y());
         glVertex2f(arrow_end_r_spear->x(), arrow_end_r_spear->y());
         glEnd();
-        map<int, set<BubbleConnectionLine*>*> elem = *bubble_from->GetConnectionInfo();
-        set<BubbleConnectionLine*>* elem1 = elem[bubble_to->GetBubbleId()];
-        BubbleConnectionLine* elem2 = *(elem1->begin());
-        QString elem4 = elem2->GetSymbolBeforeLine()->text()
-                + elem2->GetSelectedWay();
-                + elem2->GetSymbolAfterLine()->text();
-        renderText(int((arrow_start->x() + arrow_end->x())/2),
-                   int((arrow_start->y() + arrow_end->y())/2),
-                   elem4,
-//                     (bubble_from->GetConnectionInfo()->find(bubble_to->GetBubbleId()) != map<int, set<BubbleConnectionLine*>*>.end()
-//                    ? bubble_from->GetConnectionInfo()->find(bubble_to->GetBubbleId())
-//                    : "-"),
-                   QFont("cairo"));
+
+        QString font_name = "cairo";
+        // TODO Duplication of arrow shouldn`t remove previouse connect description
+        // TODO Add ability to delete connection betwen bubbles
+        DrawArrowTextDescription(bubble_from, bubble_to, font_name);
     }
 
     return true;
@@ -463,6 +456,28 @@ void BubbleWindow::DrawArrowToPoint(Bubble* bubble_from, QPoint* bubble_to_point
     glEnd();
 
     std::cout << arrow_start->x() <<" " << arrow_start->y() << " " << arrow_end_r_spear->x() << " " << arrow_end_r_spear->y() << std::endl;
+}
+
+void BubbleWindow::DrawArrowTextDescription(Bubble* bubble_from, Bubble* bubble_to, const QString font_name) {
+    // TODO add rotation for text, maybe bold with color way
+    set<BubbleConnectionLine*>* connection_operations = (*bubble_from->GetConnectionInfo())[bubble_to->GetBubbleId()];
+    QString* connect_description = new QString("");
+    QString* description_part_connector = new QString(":");
+    QString* descriptions_connector = new QString(", ");
+    for (set<BubbleConnectionLine*>::iterator it = connection_operations->begin(); it != connection_operations->end(); it++) {
+        *connect_description += (*it)->GetSymbolBeforeLine()->text()
+                + *description_part_connector
+                + (*it)->GetSelectedWay()
+                + *description_part_connector
+                + (*it)->GetSymbolAfterLine()->text();
+        if (it != prev(connection_operations->end())) {
+            *connect_description += *descriptions_connector;
+        }
+    }
+    renderText(int((bubble_from->GetPosition()->x() + bubble_to->GetPosition()->x())/2),
+               int((bubble_from->GetPosition()->y() + bubble_to->GetPosition()->y())/2),
+               *connect_description,
+               QFont(font_name));
 }
 
 int BubbleWindow::GetNewId() {

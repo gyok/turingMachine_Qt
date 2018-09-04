@@ -32,6 +32,7 @@ protected:
     void RenameBubble(Bubble*);
     void SkipRenameBubble(bool saveBubbleName);
     void DrawArrowToPoint(Bubble*, QPoint*);
+    void DrawArrowTextDescription(Bubble* bubble_from, Bubble* bubble_to, QString font_name);
 
 
     Bubble* FindBubbleAtPoint(QPoint, bool*);
