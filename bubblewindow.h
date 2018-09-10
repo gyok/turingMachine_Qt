@@ -1,10 +1,11 @@
 #ifndef BUBBLEWINDOW_H
 #define BUBBLEWINDOW_H
 
-#include <QGLWidget>
+#include <QOpenGLWidget>
 #include <QGuiApplication>
 #include <QMouseEvent>
 #include <QScrollArea>
+#include <QPainter>
 #include <set>
 #include <math.h>
 #include <iostream>
@@ -12,7 +13,7 @@
 #include "bubbleconnectionmanager.h"
 #include "turingline.h"
 
-class BubbleWindow : public QGLWidget
+class BubbleWindow : public QOpenGLWidget
 {
     Q_OBJECT
 
@@ -26,17 +27,15 @@ protected:
     virtual void mouseDoubleClickEvent(QMouseEvent *event);
     virtual void keyPressEvent(QKeyEvent *event);
 
-    void DrawBubble(Bubble*);
+    void DrawBubble(Bubble*, QPainter*);
     double PointDistance(QPoint, QPoint);
     int InRange(int min, int current, int max);
     void RenameBubble(Bubble*);
     void SkipRenameBubble(bool saveBubbleName);
     void DrawArrowToPoint(Bubble*, QPoint*);
-    void DrawArrowTextDescription(Bubble* bubble_from, Bubble* bubble_to, QString font_name);
-
-
+    void DrawArrowTextDescription(Bubble* bubble_from, Bubble* bubble_to, QString font_name, QPainter*);
     Bubble* FindBubbleAtPoint(QPoint, bool*);
-    bool BubbleArrowConnect(Bubble*, Bubble*);
+    bool BubbleArrowConnect(Bubble*, Bubble*, QPainter*);
 
     QScrollArea* _scrollArea;
     bool _rename_bubble_mode = false;

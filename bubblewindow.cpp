@@ -5,7 +5,7 @@
 
 using namespace std;
 
-BubbleWindow::BubbleWindow(TuringLine* turingLine, QWidget* pwgt /*= 0*/) : QGLWidget(pwgt)
+BubbleWindow::BubbleWindow(TuringLine* turingLine, QWidget* pwgt /*= 0*/) : QOpenGLWidget(pwgt)
 {
     _bubble_count = new int(0);
     _bubbleDrag = new bool(false);
@@ -25,7 +25,6 @@ BubbleWindow::BubbleWindow(TuringLine* turingLine, QWidget* pwgt /*= 0*/) : QGLW
 
 void BubbleWindow::initializeGL()
 {
-    qglClearColor(QColor(247, 241, 245));
 }
 
 void BubbleWindow::resizeGL(int w, int h)
@@ -38,16 +37,21 @@ void BubbleWindow::resizeGL(int w, int h)
 
 void BubbleWindow::paintGL()
 {
+    QPainter* painter = new QPainter(this);
+    painter->beginNativePainting();
+    glClearColor(0.97, 0.98, 0.98, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     for (set<Bubble*>::iterator it = GetBubbleSet()->begin(); it != GetBubbleSet()->end(); ++it) {
-        DrawBubble(*it);
+        DrawBubble(*it, painter);
     }
 
     if (*_bubbleConnect) {
         std::cout << this->pos().x() << std::endl;
         DrawArrowToPoint(_connectingBubble, new QPoint(_currentPosition));
     }
+    painter->endNativePainting();
+    painter->~QPainter();
 }
 
 void BubbleWindow::mousePressEvent(QMouseEvent *event) {
@@ -95,16 +99,16 @@ void BubbleWindow::mouseReleaseEvent(QMouseEvent *event) {
         StopDragBubble();
     }
 
-    updateGL();
+    update();
 }
 
 void BubbleWindow::mouseMoveEvent(QMouseEvent *event) {
     if (*_bubbleDrag) {
         _draggedBubble->SetPosition(new QPoint(InRange(0, event->x(), width()), InRange(0, event->y(), height())));
-        updateGL();
+        update();
     } else if (*_bubbleConnect) {
         _currentPosition = event->pos();
-        updateGL();
+        update();
     }
 }
 
@@ -127,12 +131,12 @@ void BubbleWindow::keyPressEvent(QKeyEvent *event) {
             _rename_bubble_name += event->text();
             _rename_bubble->SetName(new QString(_rename_bubble_name));
 
-            updateGL();
+            update();
         } else if (event->key() == Qt::Key_Backspace) {
             _rename_bubble_name.truncate(_rename_bubble_name.length() - 1);
             _rename_bubble->SetName(new QString(_rename_bubble_name));
 
-            updateGL();
+            update();
         } else if (event->key() == Qt::Key_Enter
                    || event->key() == Qt::Key_Return) {
             SkipRenameBubble(true);
@@ -142,7 +146,7 @@ void BubbleWindow::keyPressEvent(QKeyEvent *event) {
     }
 }
 
-void BubbleWindow::DrawBubble(Bubble *bubble){
+void BubbleWindow::DrawBubble(Bubble *bubble, QPainter* painter){
     QPoint* bubble_center_position = bubble->GetPosition();
     float* bubble_size = bubble->GetBubbleSize();
     GLfloat red_color_level = (float)bubble->GetColor()->red();
@@ -160,11 +164,13 @@ void BubbleWindow::DrawBubble(Bubble *bubble){
     glEnd();
 
     for (set<Bubble*>::iterator it = bubble->GetConnectionBubbleSet()->begin(); it != bubble->GetConnectionBubbleSet()->end(); it++) {
-        BubbleArrowConnect(bubble, *it);
+        BubbleArrowConnect(bubble, *it, painter);
     }
 
     glColor3f(red_color_level/255, green_color_level/255, blue_color_level/255);
-    renderText(bubble_center_position->rx() + *bubble_size + 3, bubble_center_position->ry() + *bubble_size / 2, *bubble->GetName(), *_name_label_font);
+    painter->endNativePainting();
+    painter->drawText(bubble_center_position->rx() + *bubble_size + 3, bubble_center_position->ry() + *bubble_size / 2, *bubble->GetName());
+    painter->beginNativePainting();
 }
 
 double BubbleWindow::PointDistance(QPoint p1, QPoint p2) {
@@ -204,7 +210,7 @@ void BubbleWindow::AddBubble() {
 
     GetBubbleSet()->insert(new Bubble(new int(GetNewId()), point, new QColor(112, 122, 116),new QString(QStringLiteral("A %1").arg((*_bubble_count)++)), new float(BUBBLE_DEFAULT_SIZE)));
 
-    this->updateGL();
+    this->update();
 }
 
 void BubbleWindow::DeleteSelectedBubbles() {
@@ -224,7 +230,7 @@ void BubbleWindow::DeleteSelectedBubbles() {
         delete(*it);
     }
 
-    updateGL();
+    update();
 }
 
 void BubbleWindow::SelectBubble(Bubble* bubble) {
@@ -299,7 +305,7 @@ Bubble* BubbleWindow::FindBubbleAtPoint(QPoint point, bool* bubble_finded) {
     return *(GetBubbleSet()->begin());
 }
 
-bool BubbleWindow::BubbleArrowConnect(Bubble* bubble_from, Bubble* bubble_to) {
+bool BubbleWindow::BubbleArrowConnect(Bubble* bubble_from, Bubble* bubble_to, QPainter* painter) {
     QPoint* bubble_from_point = bubble_from->GetPosition();
     QPoint* bubble_to_point = bubble_to->GetPosition();
 
@@ -379,7 +385,8 @@ bool BubbleWindow::BubbleArrowConnect(Bubble* bubble_from, Bubble* bubble_to) {
         QString font_name = "cairo";
         // TODO Duplication of arrow shouldn`t remove previouse connect description
         // TODO Add ability to delete connection betwen bubbles
-        DrawArrowTextDescription(bubble_from, bubble_to, font_name);
+//        glEnd();
+        DrawArrowTextDescription(bubble_from, bubble_to, font_name, painter);
     }
 
     return true;
@@ -458,7 +465,7 @@ void BubbleWindow::DrawArrowToPoint(Bubble* bubble_from, QPoint* bubble_to_point
     std::cout << arrow_start->x() <<" " << arrow_start->y() << " " << arrow_end_r_spear->x() << " " << arrow_end_r_spear->y() << std::endl;
 }
 
-void BubbleWindow::DrawArrowTextDescription(Bubble* bubble_from, Bubble* bubble_to, const QString font_name) {
+void BubbleWindow::DrawArrowTextDescription(Bubble* bubble_from, Bubble* bubble_to, const QString font_name, QPainter* painter) {
     // TODO add rotation for text, maybe bold with color way
     set<BubbleConnectionLine*>* connection_operations = (*bubble_from->GetConnectionInfo())[bubble_to->GetBubbleId()];
     QString* connect_description = new QString("");
@@ -474,10 +481,45 @@ void BubbleWindow::DrawArrowTextDescription(Bubble* bubble_from, Bubble* bubble_
             *connect_description += *descriptions_connector;
         }
     }
-    renderText(int((bubble_from->GetPosition()->x() + bubble_to->GetPosition()->x())/2),
-               int((bubble_from->GetPosition()->y() + bubble_to->GetPosition()->y())/2),
-               *connect_description,
-               QFont(font_name));
+    cout << "start draw connection" << endl;
+
+    painter->endNativePainting();
+    painter->setFont(QFont(font_name));
+
+
+
+    QPoint* centerBetweenBubbles = new QPoint((bubble_from->GetPosition()->x() +
+                                               + bubble_to->GetPosition()->x()) / 2,
+                                            (bubble_from->GetPosition()->y()
+                                             + bubble_to->GetPosition()->y()) / 2);
+    double y = (bubble_from->GetPosition()->y() - bubble_to->GetPosition()->y());
+    QPoint* p = new QPoint((bubble_from->GetPosition()->x() - bubble_to->GetPosition()->x()),
+                           y);
+    cout << p->x() << "x" << p->y() << endl;
+    double r_angle = atan(double(p->x()) / double(p->y())) / 3.14;
+    double angle = r_angle * 180 + 90 + double(p->y() >= 0 ? 180 : 0);
+    angle = angle > 90 && angle < 270
+            ? angle + 180
+            : angle;
+    QPainterPath projectPath, textPath;
+    projectPath.addText(0, 0, painter->font(), *connect_description);
+    painter->translate(centerBetweenBubbles->x(), centerBetweenBubbles->y());
+    textPath.addText(0, 0, painter->font(), *connect_description);
+    painter->rotate(-angle);
+    QFont cairo_f = QFont("cairo");
+    QFontMetrics fm(cairo_f);
+    int fm_w =fm.width(*connect_description);
+    int fm_h =fm.height();
+    painter->setFont(cairo_f);
+    QPen pen = painter->pen();
+    painter->setPen(QColor(117, 114, 115, 178));
+    painter->drawText(-fm_w/2,-fm_h/2, *connect_description);
+    painter->setPen(pen);
+    painter->rotate(angle);
+    painter->translate(-centerBetweenBubbles->x(), -centerBetweenBubbles->y());
+
+    painter->beginNativePainting();
+    cout << "end draw connection" << endl;
 }
 
 int BubbleWindow::GetNewId() {

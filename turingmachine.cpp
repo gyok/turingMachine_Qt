@@ -11,10 +11,9 @@ TuringMachine::TuringMachine(QWidget* parent) :
     ui->setupUi(this);
     QWidget* mainWindow = new QWidget;
 
-    QGLFormat fmt;
-    fmt.setSampleBuffers(true);
-    fmt.setSamples(8);
-    QGLFormat::setDefaultFormat(fmt);
+    QSurfaceFormat fmt;
+    fmt.setStencilBufferSize(8);
+    QSurfaceFormat::setDefaultFormat(fmt);
 
     _line = new TuringLine;
     QVBoxLayout* leftLineControl = new QVBoxLayout(parent);
@@ -60,9 +59,22 @@ TuringMachine::TuringMachine(QWidget* parent) :
 
     mainWindow->setLayout(fullLayout);
     setCentralWidget(mainWindow);
+    centerAndResizeWindow();
 }
 
 TuringMachine::~TuringMachine()
 {
     delete ui;
+}
+
+int TuringMachine::centerAndResizeWindow()
+{
+    QRect desktopSize = QApplication::desktop()->screenGeometry();
+    QSize appSize = QSize(desktopSize.width()*0.7, desktopSize.height()*0.7);
+    this->setGeometry(QStyle::alignedRect(Qt::LeftToRight,
+                                          Qt::AlignCenter,
+                                          appSize,
+                                          desktopSize));
+
+    return 0;
 }

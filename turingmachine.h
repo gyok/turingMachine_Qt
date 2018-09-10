@@ -2,6 +2,7 @@
 #define TURINGMACHINE_H
 
 #include <QMainWindow>
+#include <QDesktopWidget>
 #include <QPushButton>
 #include <QBoxLayout>
 #include <QScrollArea>
@@ -31,6 +32,8 @@ private:
     QScrollArea* _line_sa;
 
     Ui::TuringMachine *ui;
+
+    int centerAndResizeWindow();
 };
 
 #endif // TURINGMACHINE_H
