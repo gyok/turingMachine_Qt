@@ -27,7 +27,7 @@ bool BubbleConnectionManager::AddLine()
     BubbleConnectionLine* currentLine = new BubbleConnectionLine(this, _connectedTuringLine);
     _connectionLineSet->insert(currentLine);
     LinePushButton* removeButton = new LinePushButton("&-", this, currentLine);
-    connect(removeButton, SIGNAL(clicked(bool)), currentLine, SLOT(~BubbleConnectionLine()));
+    connect(removeButton, SIGNAL(clicked(bool)), currentLine, SLOT(RemoveConnectionLine()));
 
     QHBoxLayout* currentLineLayout = new QHBoxLayout();
     currentLineLayout->addWidget(currentLine->GetSymbolBeforeLine());

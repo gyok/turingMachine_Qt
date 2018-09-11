@@ -10,11 +10,13 @@ class BubbleConnectionLine : public QObject
     Q_OBJECT
 public:
     BubbleConnectionLine(QWidget*, TuringLine*);
-
+    ~BubbleConnectionLine();
     QLineEdit* GetSymbolBeforeLine();
     QLineEdit* GetSymbolAfterLine();
     QComboBox* GetComboBox();
     QString GetSelectedWay();
+public slots:
+    void RemoveConnectionLine();
 private:
     QLineEdit* _symbolBeforeLine;
     QLineEdit* _symbolAfterLine;

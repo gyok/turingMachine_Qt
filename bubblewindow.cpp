@@ -501,19 +501,27 @@ void BubbleWindow::DrawArrowTextDescription(Bubble* bubble_from, Bubble* bubble_
     angle = angle > 90 && angle < 270
             ? angle + 180
             : angle;
-    QPainterPath projectPath, textPath;
-    projectPath.addText(0, 0, painter->font(), *connect_description);
     painter->translate(centerBetweenBubbles->x(), centerBetweenBubbles->y());
-    textPath.addText(0, 0, painter->font(), *connect_description);
     painter->rotate(-angle);
     QFont cairo_f = QFont("cairo");
     QFontMetrics fm(cairo_f);
-    int fm_w =fm.width(*connect_description);
-    int fm_h =fm.height();
+    int fm_one_w = fm.width("A");
+    int fm_w = fm.width(*connect_description);
+    int fm_h = fm.height();
     painter->setFont(cairo_f);
     QPen pen = painter->pen();
-    painter->setPen(QColor(117, 114, 115, 178));
-    painter->drawText(-fm_w/2,-fm_h/2, *connect_description);
+    QPen grayPen(QColor(117, 114, 115, 244));
+    QPen greenPen(QColor(46, 184, 101, 244));
+    painter->setPen(greenPen);
+    if (bubble_from->GetPosition()->x() < bubble_to->GetPosition()->x()) {
+        painter->drawText(-fm_one_w * 1.5 + -fm_w / 2, -fm_h/2, "→");
+        painter->setPen(grayPen);
+        painter->drawText(-fm_w / 2, -fm_h/2, *connect_description);
+    } else {
+        painter->drawText(-fm_one_w * 1.5 + -fm_w / 2, fm_h, "←");
+        painter->setPen(grayPen);
+        painter->drawText(-fm_w/2, fm_h, *connect_description);
+    }
     painter->setPen(pen);
     painter->rotate(angle);
     painter->translate(-centerBetweenBubbles->x(), -centerBetweenBubbles->y());

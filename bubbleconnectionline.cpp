@@ -13,6 +13,17 @@ BubbleConnectionLine::BubbleConnectionLine(QWidget* parent, TuringLine* turingLi
     _wayToMoveCombobox->setCurrentIndex(1);
 }
 
+BubbleConnectionLine::~BubbleConnectionLine() {
+
+}
+
+void BubbleConnectionLine::RemoveConnectionLine() {
+    delete _symbolBeforeLine;
+    delete _symbolAfterLine;
+    delete _wayToMoveCombobox;
+
+    this->~BubbleConnectionLine();
+}
 
 QLineEdit* BubbleConnectionLine::GetSymbolBeforeLine() {
     return _symbolBeforeLine;
