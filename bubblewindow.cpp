@@ -385,7 +385,7 @@ bool BubbleWindow::BubbleArrowConnect(Bubble* bubble_from, Bubble* bubble_to, QP
         QString font_name = "cairo";
         // TODO Duplication of arrow shouldn`t remove previouse connect description
         // TODO Add ability to delete connection betwen bubbles
-//        glEnd();
+        // TODO make available to draw connection description for cyclecarrows
         DrawArrowTextDescription(bubble_from, bubble_to, font_name, painter);
     }
 
@@ -481,6 +481,10 @@ void BubbleWindow::DrawArrowTextDescription(Bubble* bubble_from, Bubble* bubble_
             *connect_description += *descriptions_connector;
         }
     }
+    if (connect_description->isEmpty()) {
+        return;
+    }
+
     cout << "start draw connection" << endl;
 
     painter->endNativePainting();
@@ -492,9 +496,8 @@ void BubbleWindow::DrawArrowTextDescription(Bubble* bubble_from, Bubble* bubble_
                                                + bubble_to->GetPosition()->x()) / 2,
                                             (bubble_from->GetPosition()->y()
                                              + bubble_to->GetPosition()->y()) / 2);
-    double y = (bubble_from->GetPosition()->y() - bubble_to->GetPosition()->y());
     QPoint* p = new QPoint((bubble_from->GetPosition()->x() - bubble_to->GetPosition()->x()),
-                           y);
+                           (bubble_from->GetPosition()->y() - bubble_to->GetPosition()->y()));
     cout << p->x() << "x" << p->y() << endl;
     double r_angle = atan(double(p->x()) / double(p->y())) / 3.14;
     double angle = r_angle * 180 + 90 + double(p->y() >= 0 ? 180 : 0);

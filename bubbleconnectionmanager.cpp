@@ -30,6 +30,7 @@ bool BubbleConnectionManager::AddLine()
     connect(removeButton, &LinePushButton::clicked, removeButton, &LinePushButton::RemoveCurrentLine);
 
     QHBoxLayout* currentLineLayout = new QHBoxLayout();
+    // TODO make tab order better
     currentLineLayout->addWidget(currentLine->GetSymbolBeforeLine());
     currentLineLayout->addWidget(currentLine->GetComboBox());
     currentLineLayout->addWidget(currentLine->GetSymbolAfterLine());
@@ -50,7 +51,8 @@ bool BubbleConnectionManager::RemoveLine(BubbleConnectionLine* connection_line_f
 }
 
 bool BubbleConnectionManager::fixSize() {
-    resize(sizeHint());
+    QSize new_size = QSize(this->width(), sizeHint().height());
+    resize(new_size);
 
     return true;
 }
