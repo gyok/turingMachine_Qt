@@ -15,8 +15,6 @@ public:
     QLineEdit* GetSymbolAfterLine();
     QComboBox* GetComboBox();
     QString GetSelectedWay();
-public slots:
-    void RemoveConnectionLine();
 private:
     QLineEdit* _symbolBeforeLine;
     QLineEdit* _symbolAfterLine;

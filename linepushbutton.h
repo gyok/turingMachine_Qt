@@ -7,14 +7,17 @@
 
 class LinePushButton : public QPushButton
 {
+    Q_OBJECT
 public:
     BubbleConnectionLine* GetConnectionLine();
-signals:
-
-
     LinePushButton(char*, QWidget*, BubbleConnectionLine*);
+    void SetLineLayout(QHBoxLayout*);
+    QHBoxLayout* GetLineLayout();
+public slots:
+    void RemoveCurrentLine();
 private:
     BubbleConnectionLine* _current_line;
+    QHBoxLayout* _line_layout;
 };
 
 #endif // LINEPUSHBUTTON_H

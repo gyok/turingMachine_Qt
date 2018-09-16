@@ -2,10 +2,13 @@
 #define BUBBLECONNECTIONMANAGER_H
 
 #include <QDialog>
-#include <set>
 #include <QPushButton>
+#include <QTimer>
+#include <set>
 #include "linepushbutton.h"
 #include "bubbleconnectionline.h"
+
+class LinePushButton;
 
 class BubbleConnectionManager : QDialog
 {
@@ -16,7 +19,8 @@ public:
     int execWindow();
 public slots:
     bool AddLine();
-    bool RemoveLine(BubbleConnectionLine* connectionLineForDelete);
+    bool RemoveLine(BubbleConnectionLine*, LinePushButton*);
+    bool fixSize();
 private:
     std::set<BubbleConnectionLine*>* _connectionLineSet;
     TuringLine* _connectedTuringLine;
