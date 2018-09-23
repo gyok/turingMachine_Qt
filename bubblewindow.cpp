@@ -386,7 +386,6 @@ bool BubbleWindow::BubbleArrowConnect(Bubble* bubble_from, Bubble* bubble_to, QP
     QString font_name = "cairo";
     // TODO Duplication of arrow shouldn`t remove previouse connect description
     // TODO Add ability to delete connection betwen bubbles
-    // TODO make available to draw connection description for cyclecarrows
     DrawArrowTextDescription(bubble_from, bubble_to, font_name, painter);
 
     return true;
