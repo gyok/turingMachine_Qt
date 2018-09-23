@@ -2,6 +2,7 @@
 
 #define BUBBLE_DEFAULT_SIZE 15
 #define DOUBLE_PI 6.2831854
+#define ANGLE_160 2.8085
 
 using namespace std;
 
@@ -312,8 +313,8 @@ bool BubbleWindow::BubbleArrowConnect(Bubble* bubble_from, Bubble* bubble_to, QP
     double point_disctance = PointDistance(*bubble_from_point, *bubble_to_point);
     // draw cicle arrow or connect two bubbles
     if (point_disctance == 0) {
-        QPoint* ungle_center = new QPoint(bubble_from_point->x() + 4 * *bubble_from->GetBubbleSize() * sinf(2.8085),
-                                          bubble_from_point->y() + 4 * *bubble_from->GetBubbleSize() * cosf(2.8085));
+        QPoint* ungle_center = new QPoint(bubble_from_point->x() + 4 * *bubble_from->GetBubbleSize() * sinf(ANGLE_160),
+                                          bubble_from_point->y() + 4 * *bubble_from->GetBubbleSize() * cosf(ANGLE_160));
         QPoint* arrow_start = new QPoint(bubble_from_point->x() + *bubble_from->GetBubbleSize() * sinf(2.617),
                                          bubble_from_point->y() + *bubble_from->GetBubbleSize() * cosf(2.617));
         QPoint* arrow_ungle_start = new QPoint(bubble_from_point->x() + 4 * *bubble_from->GetBubbleSize() * sinf(2.617),
@@ -381,13 +382,12 @@ bool BubbleWindow::BubbleArrowConnect(Bubble* bubble_from, Bubble* bubble_to, QP
         glVertex2f(arrow_end->x(), arrow_end->y());
         glVertex2f(arrow_end_r_spear->x(), arrow_end_r_spear->y());
         glEnd();
-
-        QString font_name = "cairo";
-        // TODO Duplication of arrow shouldn`t remove previouse connect description
-        // TODO Add ability to delete connection betwen bubbles
-        // TODO make available to draw connection description for cyclecarrows
-        DrawArrowTextDescription(bubble_from, bubble_to, font_name, painter);
     }
+    QString font_name = "cairo";
+    // TODO Duplication of arrow shouldn`t remove previouse connect description
+    // TODO Add ability to delete connection betwen bubbles
+    // TODO make available to draw connection description for cyclecarrows
+    DrawArrowTextDescription(bubble_from, bubble_to, font_name, painter);
 
     return true;
 }
@@ -465,8 +465,8 @@ void BubbleWindow::DrawArrowToPoint(Bubble* bubble_from, QPoint* bubble_to_point
     std::cout << arrow_start->x() <<" " << arrow_start->y() << " " << arrow_end_r_spear->x() << " " << arrow_end_r_spear->y() << std::endl;
 }
 
-void BubbleWindow::DrawArrowTextDescription(Bubble* bubble_from, Bubble* bubble_to, const QString font_name, QPainter* painter) {
-    // TODO add rotation for text, maybe bold with color way
+void BubbleWindow::DrawArrowTextDescription(Bubble* bubble_from, Bubble* bubble_to,
+                                            const QString font_name, QPainter* painter) {
     set<BubbleConnectionLine*>* connection_operations = (*bubble_from->GetConnectionInfo())[bubble_to->GetBubbleId()];
     QString* connect_description = new QString("");
     QString* description_part_connector = new QString(":");
@@ -490,8 +490,6 @@ void BubbleWindow::DrawArrowTextDescription(Bubble* bubble_from, Bubble* bubble_
     painter->endNativePainting();
     painter->setFont(QFont(font_name));
 
-
-
     QPoint* centerBetweenBubbles = new QPoint((bubble_from->GetPosition()->x() +
                                                + bubble_to->GetPosition()->x()) / 2,
                                             (bubble_from->GetPosition()->y()
@@ -504,9 +502,18 @@ void BubbleWindow::DrawArrowTextDescription(Bubble* bubble_from, Bubble* bubble_
     angle = angle > 90 && angle < 270
             ? angle + 180
             : angle;
-    painter->translate(centerBetweenBubbles->x(), centerBetweenBubbles->y());
-    painter->rotate(-angle);
-    QFont cairo_f = QFont("cairo");
+
+    // center of round arrow
+    QPoint* round_circle_center = new QPoint(bubble_from->GetPosition()->x() + 4 * *bubble_from->GetBubbleSize() * sinf(ANGLE_160) + 1 * *bubble_from->GetBubbleSize(),
+                                      bubble_from->GetPosition()->y() + 4 * *bubble_from->GetBubbleSize() * cosf(ANGLE_160) - 2.5 * *bubble_from->GetBubbleSize());
+    // rotate text if connect two different bubbles
+    if (bubble_from != bubble_to) {
+        painter->translate(centerBetweenBubbles->x(), centerBetweenBubbles->y());
+        painter->rotate(-angle);
+    } else {
+        painter->translate(round_circle_center->x(), round_circle_center->y());
+    }
+    QFont cairo_f = QFont(font_name);
     QFontMetrics fm(cairo_f);
     int fm_one_w = fm.width("A");
     int fm_w = fm.width(*connect_description);
@@ -526,8 +533,13 @@ void BubbleWindow::DrawArrowTextDescription(Bubble* bubble_from, Bubble* bubble_
         painter->drawText(-fm_w/2, fm_h, *connect_description);
     }
     painter->setPen(pen);
-    painter->rotate(angle);
-    painter->translate(-centerBetweenBubbles->x(), -centerBetweenBubbles->y());
+    // rotate text if connect two different bubbles
+    if (bubble_from != bubble_to) {
+        painter->rotate(angle);
+        painter->translate(-centerBetweenBubbles->x(), -centerBetweenBubbles->y());
+    } else {
+        painter->translate(-round_circle_center->x(), -round_circle_center->y());
+    }
 
     painter->beginNativePainting();
     cout << "end draw connection" << endl;
