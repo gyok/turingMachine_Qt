@@ -15,6 +15,8 @@ class Bubble
 private:
     QPoint* _position;
     QColor* _color;
+    QColor* _default_color;
+    QColor* _select_color;
     QString* _name;
     float* _size;
     int* _id;
@@ -28,6 +30,12 @@ public:
     // color of bubble
     QColor* GetColor();
     void SetColor(QColor*);
+
+    QColor* GetDefaultColor();
+    void SetDefaultColor(QColor*);
+
+    QColor* GetSelectColor();
+    void SetSelectColor(QColor*);
 
     // name of bubble
     QString* GetName();

@@ -3,7 +3,6 @@
 
 #define GRAPHICVIEW_W 2000
 #define GRAPHICVIEW_H 2000
-#define CONTROL_BUTTON_SIZE 25
 
 TuringMachine::TuringMachine(QWidget* parent) :
     QMainWindow(parent),
@@ -17,30 +16,33 @@ TuringMachine::TuringMachine(QWidget* parent) :
     QSurfaceFormat::setDefaultFormat(fmt);
 
     _line = new TuringLine;
+    ControlBar* controlBarManager = new ControlBar(this);
+    QVBoxLayout* controlBar = new QVBoxLayout(parent);
     QVBoxLayout* leftLineControl = new QVBoxLayout(parent);
     QVBoxLayout* rightLineControl = new QVBoxLayout(parent);
-    QVBoxLayout* controlButton = new QVBoxLayout(parent);
+    // QVBoxLayout* controlButton = new QVBoxLayout(parent);
     QHBoxLayout* turingLineControl = new QHBoxLayout(parent);
     QPushButton* addLeftCell = new QPushButton("+", this);
     QPushButton* removeLeftCell = new QPushButton("-", this);
     QPushButton* addRightCell = new QPushButton("+", this);
     QPushButton* removeRightCell = new QPushButton("-", this);
-    QPushButton* startButton = new QPushButton(this);
-    QPushButton* stopButton = new QPushButton(this);
-    startButton->setIcon(QIcon("../TuringMachine/img/start.xpm"));
-    stopButton->setIcon(QIcon("../TuringMachine/img/stop.xpm"));
-    startButton->setIconSize(QSize(CONTROL_BUTTON_SIZE, CONTROL_BUTTON_SIZE));
-    stopButton->setIconSize(QSize(CONTROL_BUTTON_SIZE, CONTROL_BUTTON_SIZE));
+    QPushButton* runButton = controlBarManager->GetRunButton();
+    QPushButton* pauseButton = controlBarManager->GetPauseButton();
+
     leftLineControl->addWidget(removeLeftCell);
     leftLineControl->addWidget(addLeftCell);
     rightLineControl->addWidget(addRightCell);
     rightLineControl->addWidget(removeRightCell);
-    controlButton->addWidget(startButton);
-    controlButton->addWidget(stopButton);
+    controlBar->addWidget(runButton);
+    controlBar->addWidget(pauseButton);
+
     turingLineControl->addLayout(leftLineControl);
     turingLineControl->addWidget(_line);
     turingLineControl->addLayout(rightLineControl);
-    turingLineControl->addLayout(controlButton);
+    turingLineControl->addLayout(controlBar);
+
+    connect(runButton, SIGNAL(clicked(bool)), controlBarManager, SLOT(RunButtonClicked()));
+    connect(pauseButton, SIGNAL(clicked(bool)), controlBarManager, SLOT(PauseButtonClicked()));
     connect(addLeftCell, SIGNAL(clicked(bool)), _line, SLOT(AddCellFromLeft()));
     connect(removeLeftCell, SIGNAL(clicked(bool)), _line, SLOT(RemoveCellFromLeft()));
     connect(addRightCell, SIGNAL(clicked(bool)), _line, SLOT(AddCellFromRight()));
@@ -54,9 +56,16 @@ TuringMachine::TuringMachine(QWidget* parent) :
     connect(addBulbButton, SIGNAL(clicked(bool)), this->_bubble_window, SLOT(AddBubble()));
     connect(deleteBulbButton, SIGNAL(clicked(bool)), this->_bubble_window, SLOT(DeleteSelectedBubbles()));
 
+    QPushButton *startBulbButton = new QPushButton(QIcon("../TuringMachine/img/start_bubble.xpm"), "&start bubble", this);
+    QPushButton *finishBulbButton = new QPushButton(QIcon("../TuringMachine/img/finish_bubble.xpm"), "&finish bubble", this);
+    connect(startBulbButton, SIGNAL(clicked(bool)), this->_bubble_window, SLOT(MakeStartSelectedBubble()));
+    connect(finishBulbButton, SIGNAL(clicked(bool)), this->_bubble_window, SLOT(MakeFinishSelectedBubble()));
+
     QVBoxLayout *fullLayout = new QVBoxLayout;
     QHBoxLayout *buttonControlPanelLayout = new QHBoxLayout;
     buttonControlPanelLayout->addWidget(addBulbButton);
+    buttonControlPanelLayout->addWidget(startBulbButton);
+    buttonControlPanelLayout->addWidget(finishBulbButton);
     buttonControlPanelLayout->addWidget(deleteBulbButton);
 
     _bubble_window_sa = new QScrollArea;

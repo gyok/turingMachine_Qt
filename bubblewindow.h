@@ -46,14 +46,17 @@ protected:
     QString _rename_bubble_name = "";
     QString _before_rename_bubble_name = "";
     Bubble* _rename_bubble;
-    Bubble* _draggedBubble;
-    Bubble* _connectingBubble;
-    QColor _selected_bubble_color = QColor(144, 14, 249);
-    QColor _default_bubble_color = QColor(112, 122, 116);
+    Bubble* _dragged_bubble;
+    Bubble* _connecting_bubble;
     std::set<Bubble*>* _bubble_set;
     std::set<Bubble*>* _selected_bubble_set;
+
+    // bubbles which starts end finish execution of program
+    Bubble* _start_bubble = 0;
+    Bubble* _finish_bubble = 0;
+
     QFont* _name_label_font;
-    QPoint _currentPosition = QPoint(0,0);
+    QPoint _current_position = QPoint(0,0);
     TuringLine* _turingLine;
 
 signals:
@@ -62,6 +65,9 @@ signals:
 public slots:
     void AddBubble();
     void DeleteSelectedBubbles();
+    // move startup and end of program execution at selected bubble
+    void MakeStartSelectedBubble();
+    void MakeFinishSelectedBubble();
 
 public:
     // set of bubbles

@@ -49,7 +49,7 @@ void BubbleWindow::paintGL()
 
     if (*_bubbleConnect) {
         std::cout << this->pos().x() << std::endl;
-        DrawArrowToPoint(_connectingBubble, new QPoint(_currentPosition));
+        DrawArrowToPoint(_connecting_bubble, new QPoint(_current_position));
     }
     painter->endNativePainting();
     painter->~QPainter();
@@ -105,10 +105,10 @@ void BubbleWindow::mouseReleaseEvent(QMouseEvent *event) {
 
 void BubbleWindow::mouseMoveEvent(QMouseEvent *event) {
     if (*_bubbleDrag) {
-        _draggedBubble->SetPosition(new QPoint(InRange(0, event->x(), width()), InRange(0, event->y(), height())));
+        _dragged_bubble->SetPosition(new QPoint(InRange(0, event->x(), width()), InRange(0, event->y(), height())));
         update();
     } else if (*_bubbleConnect) {
-        _currentPosition = event->pos();
+        _current_position = event->pos();
         update();
     }
 }
@@ -234,19 +234,69 @@ void BubbleWindow::DeleteSelectedBubbles() {
     update();
 }
 
+void BubbleWindow::MakeStartSelectedBubble() {
+    if (GetSelectedBubbleSet()->empty()) {
+        return;
+    }
+    Bubble* start_bubble_candidate = *GetSelectedBubbleSet()->begin();
+    QColor* default_color = new QColor(112, 122, 116);
+    if (_start_bubble != 0) {
+        if (_start_bubble->GetBubbleId() == start_bubble_candidate->GetBubbleId()) {
+            return;
+        }
+        _start_bubble->SetDefaultColor(default_color);
+        _start_bubble->SetColor(default_color);
+    }
+    if (_finish_bubble != 0
+            && _finish_bubble->GetBubbleId() == start_bubble_candidate->GetBubbleId()) {
+        _finish_bubble->SetDefaultColor(default_color);
+        _finish_bubble->SetColor(default_color);
+        _finish_bubble = 0;
+    }
+    _start_bubble = start_bubble_candidate;
+    _start_bubble->SetDefaultColor(new QColor(31, 177, 224));
+    _start_bubble->SetColor(new QColor(31, 177, 224));
+    update();
+}
+
+void BubbleWindow::MakeFinishSelectedBubble() {
+    if (GetSelectedBubbleSet()->empty()) {
+        return;
+    }
+    Bubble* finish_bubble_candidate = *GetSelectedBubbleSet()->begin();
+    QColor* default_color = new QColor(112, 122, 116);
+    if (_finish_bubble != 0) {
+        if (_finish_bubble->GetBubbleId() == finish_bubble_candidate->GetBubbleId()) {
+            return;
+        }
+        _finish_bubble->SetDefaultColor(default_color);
+        _finish_bubble->SetColor(default_color);
+    }
+    if (_start_bubble != 0
+            && _start_bubble->GetBubbleId() == finish_bubble_candidate->GetBubbleId()) {
+        _start_bubble->SetDefaultColor(default_color);
+        _start_bubble->SetColor(default_color);
+        _start_bubble = 0;
+    }
+    _finish_bubble = finish_bubble_candidate;
+    _finish_bubble->SetDefaultColor(new QColor(88, 204, 26));
+    _finish_bubble->SetColor(new QColor(88, 204, 26));
+    update();
+}
+
 void BubbleWindow::SelectBubble(Bubble* bubble) {
     _selected_bubble_set->insert(bubble);
-    bubble->SetColor(new QColor(_selected_bubble_color));
+    bubble->SetColor(bubble->GetSelectColor());
 }
 
 void BubbleWindow::DeselectBubble(Bubble* bubble) {
     _selected_bubble_set->erase(bubble);
-    bubble->SetColor(new QColor(_default_bubble_color));
+    bubble->SetColor(bubble->GetDefaultColor());
     SkipRenameBubble(false);
 }
 
 bool BubbleWindow::StartConnectBubble(Bubble* bubble) {
-    _connectingBubble = bubble;
+    _connecting_bubble = bubble;
     *_bubbleConnect = true;
 
     return true;
@@ -255,7 +305,7 @@ bool BubbleWindow::StartConnectBubble(Bubble* bubble) {
 bool BubbleWindow::ConnectBubble(Bubble* bubble_iterator) {
     BubbleConnectionManager* connectionManager = new BubbleConnectionManager(_turingLine);
     if (connectionManager->execWindow() == QDialog::Accepted) {
-        _connectingBubble->GetConnectionBubbleSet()->insert(bubble_iterator);
+        _connecting_bubble->GetConnectionBubbleSet()->insert(bubble_iterator);
         for (set<BubbleConnectionLine*>::iterator it = connectionManager->GetConnectionLineSet()->begin();
              it != connectionManager->GetConnectionLineSet()->end();
              it++) {
@@ -264,31 +314,31 @@ bool BubbleWindow::ConnectBubble(Bubble* bubble_iterator) {
             cout << (*it)->GetSymbolAfterLine()->text().toStdString() << endl;
         }
         cout << "dialog closed" << endl;
-        (*_connectingBubble->GetConnectionInfo())[bubble_iterator->GetBubbleId()] = connectionManager->GetConnectionLineSet();
+        (*_connecting_bubble->GetConnectionInfo())[bubble_iterator->GetBubbleId()] = connectionManager->GetConnectionLineSet();
     }
 
     *_bubbleConnect = false;
-    _connectingBubble = 0;
+    _connecting_bubble = 0;
 
     return true;
 }
 
 bool BubbleWindow::StopConnectBubble() {
-    _connectingBubble = 0;
+    _connecting_bubble = 0;
     *_bubbleConnect = false;
 
     return true;
 }
 
 bool BubbleWindow::StartDragBubble(Bubble* bubble) {
-    _draggedBubble = bubble;
+    _dragged_bubble = bubble;
     *_bubbleDrag = true;
 
     return true;
 }
 
 bool BubbleWindow::StopDragBubble() {
-    _draggedBubble = 0;
+    _dragged_bubble = 0;
     *_bubbleDrag = false;
 
     return true;
@@ -414,6 +464,7 @@ void BubbleWindow::SkipRenameBubble(bool saveBubbleName) {
         _rename_bubble_name = "";
         _before_rename_bubble_name = "";
         _rename_bubble = 0;
+        update();
     }
 }
 

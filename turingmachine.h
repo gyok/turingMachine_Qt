@@ -10,6 +10,7 @@
 
 #include "bubblewindow.h"
 #include "turingline.h"
+#include "controlBar.h"
 
 namespace Ui {
 class TuringMachine;

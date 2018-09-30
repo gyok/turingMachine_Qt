@@ -32,7 +32,8 @@ SOURCES += \
     bubbleconnection.cpp \
     bubbleconnectionline.cpp \
     bubbleconnectionmanager.cpp \
-    linepushbutton.cpp
+    linepushbutton.cpp \
+    controlBar.cpp
 
 HEADERS += \
         turingmachine.h \
@@ -42,7 +43,8 @@ HEADERS += \
     bubbleconnection.h \
     bubbleconnectionline.h \
     bubbleconnectionmanager.h \
-    linepushbutton.h
+    linepushbutton.h \
+    controlBar.h
 
 FORMS += \
         turingmachine.ui

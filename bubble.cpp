@@ -5,6 +5,8 @@ using namespace std;
 Bubble::Bubble(int* id, QPoint* position, QColor* color, QString* name, float* size) {
     SetPosition(position);
     SetColor(color);
+    SetDefaultColor(new QColor(112, 122, 116));
+    SetSelectColor(new QColor(144, 14, 249));
     SetName(name);
     SetBubbleSize(size);
     SetConnectionBubbleSet(new set<Bubble*>());
@@ -34,6 +36,22 @@ QColor* Bubble::GetColor() {
 
 void Bubble::SetColor(QColor* color) {
     _color = color;
+}
+
+QColor* Bubble::GetDefaultColor() {
+    return _default_color;
+}
+
+void Bubble::SetDefaultColor(QColor* default_color) {
+    _default_color = default_color;
+}
+
+QColor* Bubble::GetSelectColor() {
+    return _select_color;
+}
+
+void Bubble::SetSelectColor(QColor* select_color) {
+    _select_color = select_color;
 }
 
 QString* Bubble::GetName() {
