@@ -48,8 +48,12 @@ TuringMachine::TuringMachine(QWidget* parent) :
     connect(addRightCell, SIGNAL(clicked(bool)), _line, SLOT(AddCellFromRight()));
     connect(removeRightCell, SIGNAL(clicked(bool)), _line, SLOT(RemoveCellFromRight()));
 
-    _bubble_window = new BubbleWindow(_line, this);
+    _core = new Core(_line, this);
+    _bubble_window = new BubbleWindow(_core, _line, this);
     _bubble_window->resize(GRAPHICVIEW_W, GRAPHICVIEW_H);
+
+    connect(runButton, SIGNAL(clicked(bool)), _core, SLOT(Run()));
+    connect(pauseButton, SIGNAL(clicked(bool)), _core, SLOT(Pause()));
 
     QPushButton *addBulbButton = new QPushButton("&add bubble", this);
     QPushButton *deleteBulbButton = new QPushButton("&delete bubble", this);

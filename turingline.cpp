@@ -29,8 +29,7 @@ TuringLine::TuringLine(QWidget *parent) : QTableWidget(parent)
 }
 
 bool TuringLine::R() {
-    QTableWidgetItem* current_cell = GetCurrentCell();
-    if (columnCount() <= current_cell->column()) {
+    if (columnCount() <= _current_cell->column()) {
         AddCellFromRight();
     }
 

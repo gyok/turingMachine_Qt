@@ -12,6 +12,7 @@
 #include "bubble.h"
 #include "bubbleconnectionmanager.h"
 #include "turingline.h"
+#include "core.h"
 
 class BubbleWindow : public QOpenGLWidget
 {
@@ -54,6 +55,7 @@ protected:
     // bubbles which starts end finish execution of program
     Bubble* _start_bubble = 0;
     Bubble* _finish_bubble = 0;
+    Core* _core;
 
     QFont* _name_label_font;
     QPoint _current_position = QPoint(0,0);
@@ -96,7 +98,7 @@ public:
     // return new id for bubble
     int GetNewId();
 
-    BubbleWindow(TuringLine*, QWidget* pwgt = 0);
+    BubbleWindow(Core*, TuringLine*, QWidget* pwgt = 0);
 };
 
 #endif // BUBBLEWINDOW_H

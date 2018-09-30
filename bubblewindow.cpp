@@ -6,7 +6,7 @@
 
 using namespace std;
 
-BubbleWindow::BubbleWindow(TuringLine* turingLine, QWidget* pwgt /*= 0*/) : QOpenGLWidget(pwgt)
+BubbleWindow::BubbleWindow(Core* core, TuringLine* turingLine, QWidget* pwgt /*= 0*/) : QOpenGLWidget(pwgt)
 {
     _bubble_count = new int(0);
     _bubbleDrag = new bool(false);
@@ -14,7 +14,7 @@ BubbleWindow::BubbleWindow(TuringLine* turingLine, QWidget* pwgt /*= 0*/) : QOpe
     _name_label_font = new QFont("cairo");
     _turingLine = turingLine;
     _max_id = new int(0);
-
+    _core = core;
 
     setFocusPolicy(Qt::StrongFocus);
 
@@ -256,6 +256,8 @@ void BubbleWindow::MakeStartSelectedBubble() {
     _start_bubble = start_bubble_candidate;
     _start_bubble->SetDefaultColor(new QColor(31, 177, 224));
     _start_bubble->SetColor(new QColor(31, 177, 224));
+    _core->SetCurrentBubble(_start_bubble);
+    _core->SetCurrentCellCode(1);
     update();
 }
 
@@ -281,6 +283,7 @@ void BubbleWindow::MakeFinishSelectedBubble() {
     _finish_bubble = finish_bubble_candidate;
     _finish_bubble->SetDefaultColor(new QColor(88, 204, 26));
     _finish_bubble->SetColor(new QColor(88, 204, 26));
+    _core->SetFinishBubbleId(_finish_bubble->GetBubbleId());
     update();
 }
 

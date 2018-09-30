@@ -11,6 +11,7 @@
 #include "bubblewindow.h"
 #include "turingline.h"
 #include "controlBar.h"
+#include "core.h"
 
 namespace Ui {
 class TuringMachine;
@@ -31,6 +32,7 @@ private:
     TuringLine* _line;
     QTableWidget* _line_widget;
     QScrollArea* _line_sa;
+    Core* _core;
 
     Ui::TuringMachine *ui;
 
