@@ -9,6 +9,8 @@ class BubbleConnectionLine : public QObject
 {
     Q_OBJECT
 public:
+    enum WayToMove{L = 0, R, N};
+    static enum WayToMove wayToMove;
     BubbleConnectionLine(QWidget*, TuringLine*);
     ~BubbleConnectionLine();
     QLineEdit* GetSymbolBeforeLine();

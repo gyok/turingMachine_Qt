@@ -306,15 +306,32 @@ bool BubbleWindow::StartConnectBubble(Bubble* bubble) {
 }
 
 bool BubbleWindow::ConnectBubble(Bubble* bubble_iterator) {
-    BubbleConnectionManager* connectionManager = new BubbleConnectionManager(_turingLine);
+    set<BubbleConnectionLine*>* connectionInfo = (*_connecting_bubble->GetConnectionInfo())[bubble_iterator->GetBubbleId()];
+    BubbleConnectionManager* connectionManager = new BubbleConnectionManager(_turingLine, connectionInfo);
     if (connectionManager->execWindow() == QDialog::Accepted) {
         _connecting_bubble->GetConnectionBubbleSet()->insert(bubble_iterator);
-        for (set<BubbleConnectionLine*>::iterator it = connectionManager->GetConnectionLineSet()->begin();
-             it != connectionManager->GetConnectionLineSet()->end();
+        set<BubbleConnectionLine*>* connectionSet = connectionManager->GetConnectionLineSet();
+        set<BubbleConnectionLine*>::iterator itToDelete;
+        bool needDelete = false;
+        for (set<BubbleConnectionLine*>::iterator it = connectionSet->begin();
+             it != connectionSet->end();
              it++) {
+            if (needDelete) {
+                needDelete = false;
+                connectionSet->erase(itToDelete);
+            }
+            if ((*it)->GetSymbolBeforeLine()->text() == NULL
+                || (*it)->GetSymbolAfterLine()->text() == NULL) {
+                itToDelete = it;
+                needDelete = true;
+            }
             cout << (*it)->GetSymbolBeforeLine()->text().toStdString() << endl;
             cout << (*it)->GetComboBox()->currentText().toStdString() << endl;
             cout << (*it)->GetSymbolAfterLine()->text().toStdString() << endl;
+        }
+        if (needDelete) {
+            needDelete = false;
+            connectionSet->erase(itToDelete);
         }
         cout << "dialog closed" << endl;
         (*_connecting_bubble->GetConnectionInfo())[bubble_iterator->GetBubbleId()] = connectionManager->GetConnectionLineSet();

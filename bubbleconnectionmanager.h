@@ -14,11 +14,13 @@ class BubbleConnectionManager : QDialog
 {
     Q_OBJECT
 public:
-    BubbleConnectionManager(TuringLine*);
+    BubbleConnectionManager(TuringLine*, std::set<BubbleConnectionLine*>* connectionInfo = NULL);
     std::set<BubbleConnectionLine*>* GetConnectionLineSet();
     int execWindow();
 public slots:
-    bool AddLine();
+    bool AddLine(QString symbolBefore = QString(""),
+                 QString symbolAfter = QString(""),
+                 BubbleConnectionLine::WayToMove wayToMove = BubbleConnectionLine::R);
     bool RemoveLine(BubbleConnectionLine*, LinePushButton*);
     bool fixSize();
 private:

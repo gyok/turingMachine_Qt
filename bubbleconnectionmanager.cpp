@@ -1,6 +1,6 @@
 #include "bubbleconnectionmanager.h"
 
-BubbleConnectionManager::BubbleConnectionManager(TuringLine* turingLine) : QDialog()
+BubbleConnectionManager::BubbleConnectionManager(TuringLine* turingLine, std::set<BubbleConnectionLine*>* connectionInfo) : QDialog()
 {
     _connectionLineSet = new std::set<BubbleConnectionLine*>();
     _connectedTuringLine = turingLine;
@@ -17,14 +17,32 @@ BubbleConnectionManager::BubbleConnectionManager(TuringLine* turingLine) : QDial
     _line_count = new int(0);
     this->setWindowTitle("Bubble connection manager");
     this->setLayout(connectionManagerLayout);
+
+    if (connectionInfo != NULL) {
+        for (std::set<BubbleConnectionLine*>::iterator it = connectionInfo->begin();
+             it != connectionInfo->end();
+             it++) {
+            QString symbolBefore = (*it)->GetSymbolBeforeLine()->text();
+            QString symbolAfter = (*it)->GetSymbolAfterLine()->text();
+            AddLine(symbolBefore,
+                    symbolAfter,
+                    static_cast<BubbleConnectionLine::WayToMove>((*it)->GetComboBox()->currentIndex()));
+            std::cout << "<888%>=<=" << std::endl;
+        }
+    }
     AddLine();
 }
 
 
-bool BubbleConnectionManager::AddLine()
+bool BubbleConnectionManager::AddLine(QString symbolBefore,
+                                      QString symbolAfter,
+                                      BubbleConnectionLine::WayToMove wayToMove)
 {
     ++(*_line_count);
     BubbleConnectionLine* currentLine = new BubbleConnectionLine(this, _connectedTuringLine);
+    currentLine->GetSymbolBeforeLine()->setText(symbolBefore);
+    currentLine->GetSymbolAfterLine()->setText(symbolAfter);
+    currentLine->GetComboBox()->setCurrentIndex(wayToMove);
     _connectionLineSet->insert(currentLine);
     LinePushButton* removeButton = new LinePushButton((char*)"&-", this, currentLine);
     connect(removeButton, &LinePushButton::clicked, removeButton, &LinePushButton::RemoveCurrentLine);

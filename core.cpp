@@ -72,8 +72,12 @@ int Core::Run() {
     }
 
     int execute_result = 0;
-    while (_current_bubble->GetBubbleId() != _finish_bubble_id && execute_result == 0) {
+    int execute_comands_bound = 10000;
+    while (_current_bubble->GetBubbleId() != _finish_bubble_id
+           && execute_result == 0
+           && execute_comands_bound > 0) {
         execute_result = execute();
+        execute_comands_bound--;
     }
 
     return 0;
