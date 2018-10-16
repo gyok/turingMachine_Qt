@@ -27,7 +27,6 @@ BubbleConnectionManager::BubbleConnectionManager(TuringLine* turingLine, std::se
             AddLine(symbolBefore,
                     symbolAfter,
                     static_cast<BubbleConnectionLine::WayToMove>((*it)->GetComboBox()->currentIndex()));
-            std::cout << "<888%>=<=" << std::endl;
         }
     }
     AddLine();

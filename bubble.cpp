@@ -2,7 +2,7 @@
 
 using namespace std;
 
-Bubble::Bubble(int* id, QPoint* position, QColor* color, QString* name, float* size) {
+Bubble::Bubble(int* id, QPoint* position, QColor* color, QString* name, double* size) {
     SetPosition(position);
     SetColor(color);
     SetDefaultColor(new QColor(112, 122, 116));
@@ -62,11 +62,11 @@ void Bubble::SetName(QString* name) {
     _name = name;
 }
 
-float* Bubble::GetBubbleSize() {
+double* Bubble::GetBubbleSize() {
     return _size;
 }
 
-void Bubble::SetBubbleSize(float* size) {
+void Bubble::SetBubbleSize(double* size) {
     _size = size;
 }
 

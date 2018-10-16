@@ -48,5 +48,4 @@ HEADERS += \
     controlBar.h \
     core.h
 
-FORMS += \
-        turingmachine.ui
+FORMS +=

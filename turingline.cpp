@@ -5,8 +5,8 @@
 
 TuringLine::TuringLine(QWidget *parent) : QTableWidget(parent)
 {
-    std::cout << "line->width(): " << width() << std::endl;
-    std::cout << "row count: " << rowCount() << " column count: " << columnCount() << std::endl;
+//    std::cout << "line->width(): " << width() << std::endl;
+//    std::cout << "row count: " << rowCount() << " column count: " << columnCount() << std::endl;
     setRowCount(1);
     this->window()->width();
     setColumnCount(CELL_COUNT);
@@ -25,7 +25,7 @@ TuringLine::TuringLine(QWidget *parent) : QTableWidget(parent)
     _current_cell = item(0, _current_cell_num);
 
 
-    std::cout << "row count: " << rowCount() << ", column count: " << columnCount() << std::endl;
+//    std::cout << "row count: " << rowCount() << ", column count: " << columnCount() << std::endl;
 }
 
 bool TuringLine::R() {
@@ -34,7 +34,7 @@ bool TuringLine::R() {
     }
 
     SelectCell(_current_cell_num + 1);
-    std::cout << _current_cell->text().toStdString() << std::endl;
+//    std::cout << _current_cell->text().toStdString() << std::endl;
 
     return true;
 }
@@ -45,7 +45,7 @@ bool TuringLine::L() {
     }
 
     SelectCell(_current_cell_num - 1);
-    std::cout << _current_cell->text().toStdString() << std::endl;
+//    std::cout << _current_cell->text().toStdString() << std::endl;
 
     return true;
 }
@@ -60,7 +60,7 @@ QTableWidgetItem* TuringLine::GetCurrentCell() {
 }
 
 bool TuringLine::AddCellFromLeft() {
-    std::cout << "add cell from left" << std::endl;
+//    std::cout << "add cell from left" << std::endl;
     this->insertColumn(0);
     this->setItem(0, 0, new QTableWidgetItem(QString(LAMBDA)));
     this->setHorizontalHeaderItem(0, new QTableWidgetItem(QString::number(--_left_border)));
@@ -70,7 +70,7 @@ bool TuringLine::AddCellFromLeft() {
 
 
 bool TuringLine::RemoveCellFromLeft() {
-    std::cout << "remove cell from left" << std::endl;
+//    std::cout << "remove cell from left" << std::endl;
     if (columnCount() > 0) {
         this->removeColumn(0);
         _left_border++;

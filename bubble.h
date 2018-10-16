@@ -1,6 +1,8 @@
 #ifndef BUBBLE_H
 #define BUBBLE_H
 
+#define BUBBLE_DEFAULT_SIZE 15
+
 #include <QPoint>
 #include <QColor>
 #include <set>
@@ -18,7 +20,7 @@ private:
     QColor* _default_color;
     QColor* _select_color;
     QString* _name;
-    float* _size;
+    double* _size;
     int* _id;
     set<Bubble*>* _connection_set;
     map<int, set<BubbleConnectionLine*>*>* _conn_info;
@@ -42,8 +44,8 @@ public:
     void SetName(QString*);
 
     // size of bubble
-    float* GetBubbleSize();
-    void SetBubbleSize(float*);
+    double* GetBubbleSize();
+    void SetBubbleSize(double*);
 
     // set of connections from this bubble to another ( this_bubble -> another_bubble)
     set<Bubble*>* GetConnectionBubbleSet();
@@ -54,7 +56,7 @@ public:
 
     int GetBubbleId();
 
-    Bubble(int*, QPoint* = new QPoint(15, 15), QColor* = new QColor(112, 122, 116), QString* = new QString("default"), float* = new float(15));
+    Bubble(int*, QPoint* = new QPoint(15, 15), QColor* = new QColor(112, 122, 116), QString* = new QString("default"), double* = new double(BUBBLE_DEFAULT_SIZE));
     ~Bubble();
 };
 

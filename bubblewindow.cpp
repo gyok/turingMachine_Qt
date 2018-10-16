@@ -48,7 +48,7 @@ void BubbleWindow::paintGL()
     }
 
     if (*_bubbleConnect) {
-        std::cout << this->pos().x() << std::endl;
+//        std::cout << this->pos().x() << std::endl;
         DrawArrowToPoint(_connecting_bubble, new QPoint(_current_position));
     }
     painter->endNativePainting();
@@ -149,7 +149,7 @@ void BubbleWindow::keyPressEvent(QKeyEvent *event) {
 
 void BubbleWindow::DrawBubble(Bubble *bubble, QPainter* painter){
     QPoint* bubble_center_position = bubble->GetPosition();
-    float* bubble_size = bubble->GetBubbleSize();
+    double* bubble_size = bubble->GetBubbleSize();
     GLfloat red_color_level = (float)bubble->GetColor()->red();
     GLfloat green_color_level = (float)bubble->GetColor()->green();
     GLfloat blue_color_level = (float)bubble->GetColor()->blue();
@@ -209,7 +209,7 @@ void BubbleWindow::AddBubble() {
         point->setY(BUBBLE_DEFAULT_SIZE);
     }
 
-    GetBubbleSet()->insert(new Bubble(new int(GetNewId()), point, new QColor(112, 122, 116),new QString(QStringLiteral("A %1").arg((*_bubble_count)++)), new float(BUBBLE_DEFAULT_SIZE)));
+    GetBubbleSet()->insert(new Bubble(new int(GetNewId()), point, new QColor(112, 122, 116),new QString(QStringLiteral("A %1").arg((*_bubble_count)++)), new double(BUBBLE_DEFAULT_SIZE)));
 
     this->update();
 }
@@ -325,15 +325,15 @@ bool BubbleWindow::ConnectBubble(Bubble* bubble_iterator) {
                 itToDelete = it;
                 needDelete = true;
             }
-            cout << (*it)->GetSymbolBeforeLine()->text().toStdString() << endl;
-            cout << (*it)->GetComboBox()->currentText().toStdString() << endl;
-            cout << (*it)->GetSymbolAfterLine()->text().toStdString() << endl;
+//            cout << (*it)->GetSymbolBeforeLine()->text().toStdString() << endl;
+//            cout << (*it)->GetComboBox()->currentText().toStdString() << endl;
+//            cout << (*it)->GetSymbolAfterLine()->text().toStdString() << endl;
         }
         if (needDelete) {
             needDelete = false;
             connectionSet->erase(itToDelete);
         }
-        cout << "dialog closed" << endl;
+//        cout << "dialog closed" << endl;
         (*_connecting_bubble->GetConnectionInfo())[bubble_iterator->GetBubbleId()] = connectionManager->GetConnectionLineSet();
     }
 
@@ -466,7 +466,7 @@ void BubbleWindow::SetScrollArea(QScrollArea* scrollArea) {
 }
 
 void BubbleWindow::RenameBubble(Bubble* bubble) {
-    cout << "RenameBubble" << endl;
+//    cout << "RenameBubble" << endl;
     _rename_bubble_mode = true;
     _rename_bubble = bubble;
     _before_rename_bubble_name = *bubble->GetName();
@@ -474,7 +474,7 @@ void BubbleWindow::RenameBubble(Bubble* bubble) {
 }
 
 void BubbleWindow::SkipRenameBubble(bool saveBubbleName) {
-    cout << "SkipRenameBubble" << endl;
+//    cout << "SkipRenameBubble" << endl;
     if (_rename_bubble_mode) {
         if (!saveBubbleName) {
             _rename_bubble->SetName(new QString(_before_rename_bubble_name));
@@ -532,7 +532,7 @@ void BubbleWindow::DrawArrowToPoint(Bubble* bubble_from, QPoint* bubble_to_point
     glVertex2f(arrow_end_r_spear->x(), arrow_end_r_spear->y());
     glEnd();
 
-    std::cout << arrow_start->x() <<" " << arrow_start->y() << " " << arrow_end_r_spear->x() << " " << arrow_end_r_spear->y() << std::endl;
+//    std::cout << arrow_start->x() <<" " << arrow_start->y() << " " << arrow_end_r_spear->x() << " " << arrow_end_r_spear->y() << std::endl;
 }
 
 void BubbleWindow::DrawArrowTextDescription(Bubble* bubble_from, Bubble* bubble_to,
@@ -555,7 +555,7 @@ void BubbleWindow::DrawArrowTextDescription(Bubble* bubble_from, Bubble* bubble_
         return;
     }
 
-    cout << "start draw connection" << endl;
+//    cout << "start draw connection" << endl;
 
     painter->endNativePainting();
     painter->setFont(QFont(font_name));
@@ -566,7 +566,7 @@ void BubbleWindow::DrawArrowTextDescription(Bubble* bubble_from, Bubble* bubble_
                                              + bubble_to->GetPosition()->y()) / 2);
     QPoint* p = new QPoint((bubble_from->GetPosition()->x() - bubble_to->GetPosition()->x()),
                            (bubble_from->GetPosition()->y() - bubble_to->GetPosition()->y()));
-    cout << p->x() << "x" << p->y() << endl;
+//    cout << p->x() << "x" << p->y() << endl;
     double r_angle = atan(double(p->x()) / double(p->y())) / 3.14;
     double angle = r_angle * 180 + 90 + double(p->y() >= 0 ? 180 : 0);
     angle = angle > 90 && angle < 270
@@ -612,7 +612,7 @@ void BubbleWindow::DrawArrowTextDescription(Bubble* bubble_from, Bubble* bubble_
     }
 
     painter->beginNativePainting();
-    cout << "end draw connection" << endl;
+//    cout << "end draw connection" << endl;
 }
 
 int BubbleWindow::GetNewId() {
