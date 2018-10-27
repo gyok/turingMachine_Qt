@@ -53,7 +53,7 @@ TuringMachine::TuringMachine(QWidget* parent) :
     connect(addRightCell, SIGNAL(clicked(bool)), _line, SLOT(AddCellFromRight()));
     connect(removeRightCell, SIGNAL(clicked(bool)), _line, SLOT(RemoveCellFromRight()));
 
-    _core = new Core(_line, this);
+    _core = new Core(_line, this, controlBarManager);
     _bubble_window = new BubbleWindow(_core, _line, this);
     _bubble_window->resize(GRAPHICVIEW_W, GRAPHICVIEW_H);
 
@@ -115,6 +115,8 @@ int TuringMachine::SaveBubbles() {
     save_stream_writer->setAutoFormatting(true);
     save_stream_writer->writeStartDocument();
     save_stream_writer->writeStartElement("bubble-set");
+    save_stream_writer->writeTextElement(QString("bubble-start"), QString::number(_bubble_window->GetStartBubbleId()));
+    save_stream_writer->writeTextElement(QString("bubble-finish"), QString::number(_bubble_window->GetFinishBubbleId()));
     for (set<Bubble*>::iterator it= _bubble_window->GetBubbleSet()->begin();
              it != _bubble_window->GetBubbleSet()->end(); it++) {
         save_stream_writer->writeStartElement("bubble");
@@ -176,6 +178,9 @@ int TuringMachine::LoadBubbles() {
     double size = 15;
     set<Bubble*>* bubble_set = new set<Bubble*>();
 
+    int start_bubble_id = -1;
+    int finish_bubble_id = -1;
+
     while (!save_stream_reader->atEnd()) {
         if (save_stream_reader->readNext() == QXmlStreamReader::EndDocument) break;
         if (save_stream_reader->isStartElement()
@@ -202,36 +207,34 @@ int TuringMachine::LoadBubbles() {
             size = 15;
         }
         if (save_stream_reader->name().toString().toStdString() == "id") {
-//            cout << save_stream_reader->readElementText().toStdString() << endl;
             id = save_stream_reader->readElementText().toInt();
         }
         if (save_stream_reader->name().toString().toStdString() == "name") {
-//            cout << save_stream_reader->readElementText().toStdString() << endl;
             name = save_stream_reader->readElementText();
         }
         if (save_stream_reader->name().toString().toStdString() == "size") {
-//            cout << save_stream_reader->readElementText().toStdString() << endl;
             size = save_stream_reader->readElementText().toDouble();
         }
         if (save_stream_reader->name().toString().toStdString() == "x") {
-//            cout << save_stream_reader->readElementText().toStdString() << endl;
             position.setX(save_stream_reader->readElementText().toInt());
         }
         if (save_stream_reader->name().toString().toStdString() == "y") {
-//            cout << save_stream_reader->readElementText().toStdString() << endl;
             position.setY(save_stream_reader->readElementText().toInt());
         }
         if (save_stream_reader->name().toString().toStdString() == "default-color") {
-//            cout << save_stream_reader->readElementText().toStdString() << endl;
             color.setNamedColor(save_stream_reader->readElementText());
         }
         if (save_stream_reader->name().toString().toStdString() == "select-color") {
-//            cout << save_stream_reader->readElementText().toStdString() << endl;
             select_color.setNamedColor(save_stream_reader->readElementText());
         }
-//        if (save_stream_reader->name().toString().toStdString() == "connected-bubbles") {
-//            cout << save_stream_reader->name().toString().toStdString() << endl;
-//        }
+
+        if (save_stream_reader->name().toString().toStdString() == "bubble-start") {
+            start_bubble_id = save_stream_reader->readElementText().toInt();
+        }
+
+        if (save_stream_reader->name().toString().toStdString() == "bubble-finish") {
+            finish_bubble_id = save_stream_reader->readElementText().toInt();
+        }
     }
     // connecting bubbles with each other
 
@@ -246,6 +249,12 @@ int TuringMachine::LoadBubbles() {
             }
         }
         (*it)->SetConnectionBubbleSet(connection_set);
+    }
+
+    // setting start and finish bubbles
+    for (set<Bubble*>::iterator it = bubble_set->begin(); it != bubble_set->end(); it++) {
+        if ((*it)->GetBubbleId() == start_bubble_id) _bubble_window->MakeStartBubble(*it);
+        if ((*it)->GetBubbleId() == finish_bubble_id) _bubble_window->MakeFinishBubble(*it);
     }
 
     if (save_stream_reader->hasError()) {

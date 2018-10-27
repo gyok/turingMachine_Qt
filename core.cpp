@@ -17,6 +17,9 @@ int Core::pause() {
 
 
 int Core::execute() {
+    QWidget* widget = _turing_line->viewport();
+    QFuture<void> future = QtConcurrent::run(widget, &QWidget::update);
+    _turing_line->viewport()->update();
     bool operation_applied = false;
     for (set<Bubble*>::iterator connected_bubble = _current_bubble->GetConnectionBubbleSet()->begin();
          connected_bubble != _current_bubble->GetConnectionBubbleSet()->end();
@@ -32,6 +35,7 @@ int Core::execute() {
                     : (*connection_description)->GetSelectedWay() == "R"
                         ? _turing_line->R()
                         : _turing_line->N();
+                QString viewer = _turing_line->GetCurrentCell()->text();
                 _current_bubble = *connected_bubble;
                 operation_applied = true;
                 break;
@@ -60,17 +64,13 @@ void Core::SetFinishBubbleId(int finish_bubble_id) {
     _finish_bubble_id = finish_bubble_id;
 }
 
-Core::Core(TuringLine* turing_line, QWidget* parent) : QObject(parent)
+Core::Core(TuringLine* turing_line, QWidget* parent, ControlBar* control_bar) : QObject(parent)
 {
     _turing_line = turing_line;
+    _control_bar = control_bar;
 }
 
-
-int Core::Run() {
-    if (_finish_bubble_id == -1) {
-        return 1;
-    }
-
+int Core::run() {
     int execute_result = 0;
     int execute_comands_bound = 10000;
     while (_current_bubble->GetBubbleId() != _finish_bubble_id
@@ -79,6 +79,24 @@ int Core::Run() {
         execute_result = execute();
         execute_comands_bound--;
     }
+
+    return 0;
+}
+
+
+int Core::Run() {
+    if (_finish_bubble_id == -1) {
+        return 1;
+    }
+
+    QFuture<int> future = QtConcurrent::run(this, &Core::run);
+
+    return 0;
+}
+
+
+int Core::Stop() {
+    _control_bar->SetRunMode();
 
     return 0;
 }

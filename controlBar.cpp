@@ -38,6 +38,13 @@ void ControlBar::PauseButtonClicked() {
                             : *_pause_active_img);
 }
 
+
+void ControlBar::SetRunMode() {
+    _run_button->setIcon(*_stop_img);
+    _pause_button->setIcon(*_pause_inactive_img);
+}
+
+
 QPushButton* ControlBar::GetRunButton() {
     return _run_button;
 }

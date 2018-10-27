@@ -71,6 +71,9 @@ public slots:
     void MakeStartSelectedBubble();
     void MakeFinishSelectedBubble();
 
+    void MakeStartBubble(Bubble*);
+    void MakeFinishBubble(Bubble*);
+
 public:
     // set of bubbles
     std::set<Bubble*>* GetBubbleSet();
@@ -89,6 +92,8 @@ public:
     bool StartDragBubble(Bubble*);
     bool StopDragBubble();
 
+    int GetStartBubbleId();
+    int GetFinishBubbleId();
 
     void SelectBubble(Bubble*);
     void DeselectBubble(Bubble*);

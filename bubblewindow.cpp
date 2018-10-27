@@ -202,9 +202,9 @@ void BubbleWindow::SetSelectedBubbleSet(std::set<Bubble*>* selected_bubble_set) 
 void BubbleWindow::AddBubble() {
     QPoint* point = new QPoint(mapFromGlobal(QCursor::pos()));
     if (!((0 < point->x())
-          && (point->x() < _scrollArea->size().width())
+          && (point->x() < _scrollArea->widget()->size().width())
           && (0 < point->y())
-          && (point->y() < _scrollArea->size().height()))) {
+          && (point->y() < _scrollArea->widget()->size().height()))) {
         point->setX(BUBBLE_DEFAULT_SIZE);
         point->setY(BUBBLE_DEFAULT_SIZE);
     }
@@ -238,7 +238,18 @@ void BubbleWindow::MakeStartSelectedBubble() {
     if (GetSelectedBubbleSet()->empty()) {
         return;
     }
-    Bubble* start_bubble_candidate = *GetSelectedBubbleSet()->begin();
+    MakeStartBubble(*GetSelectedBubbleSet()->begin());
+}
+
+void BubbleWindow::MakeFinishSelectedBubble() {
+    if (GetSelectedBubbleSet()->empty()) {
+        return;
+    }
+    MakeFinishBubble(*GetSelectedBubbleSet()->begin());
+}
+
+
+void BubbleWindow::MakeStartBubble(Bubble* start_bubble_candidate) {
     QColor* default_color = new QColor(112, 122, 116);
     if (_start_bubble != 0) {
         if (_start_bubble->GetBubbleId() == start_bubble_candidate->GetBubbleId()) {
@@ -261,11 +272,8 @@ void BubbleWindow::MakeStartSelectedBubble() {
     update();
 }
 
-void BubbleWindow::MakeFinishSelectedBubble() {
-    if (GetSelectedBubbleSet()->empty()) {
-        return;
-    }
-    Bubble* finish_bubble_candidate = *GetSelectedBubbleSet()->begin();
+
+void BubbleWindow::MakeFinishBubble(Bubble* finish_bubble_candidate) {
     QColor* default_color = new QColor(112, 122, 116);
     if (_finish_bubble != 0) {
         if (_finish_bubble->GetBubbleId() == finish_bubble_candidate->GetBubbleId()) {
@@ -286,6 +294,17 @@ void BubbleWindow::MakeFinishSelectedBubble() {
     _core->SetFinishBubbleId(_finish_bubble->GetBubbleId());
     update();
 }
+
+
+int BubbleWindow::GetStartBubbleId() {
+    return _start_bubble->GetBubbleId();
+}
+
+
+int BubbleWindow::GetFinishBubbleId() {
+    return _finish_bubble->GetBubbleId();
+}
+
 
 void BubbleWindow::SelectBubble(Bubble* bubble) {
     _selected_bubble_set->insert(bubble);

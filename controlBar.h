@@ -26,6 +26,7 @@ public:
 public slots:
     void RunButtonClicked();
     void PauseButtonClicked();
+    void SetRunMode();
 };
 
 #endif // CONTROLBAR_H
